@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using UrlShortenerService.DTOs;
 
 namespace UrlShortenerService.Controllers
 {
@@ -16,7 +18,7 @@ namespace UrlShortenerService.Controllers
         }
 
         [HttpPut("{url}", Name = "CreateAShortLink")]
-        public async Task<ActionResult<string>> Put(string url)
+        public async Task<ActionResult<string>> Put(ShortLinkCreateDTO url)
         {
             return Ok("https://test.com");
         }
@@ -25,6 +27,12 @@ namespace UrlShortenerService.Controllers
         public async Task<ActionResult> Get(string url)
         {
             return RedirectPermanent("https://www.google.com");
+        }
+
+        [HttpGet("{page}/{pageCapacity}", Name = "GetShortenedUrls")]
+        public async Task<ActionResult<IEnumerable<ShortLinkReadDTO>>> Get(int page, int pageCapacity = 10)
+        {
+            return Ok("https://test.com");
         }
     }
 }
