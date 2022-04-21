@@ -1,18 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using UrlShortenerService.Cache;
 using UrlShortenerService.Data;
+using UrlShortenerService.Services;
+using UrlShortenerService.Utils;
 
 namespace UrlShortenerService
 {
@@ -30,6 +27,11 @@ namespace UrlShortenerService
             services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("InMem"));
             services.AddScoped<IShortLinkKeyRepo, ShortLinkKeyRepo>();
             services.AddScoped<IShortLinkRepo, ShortLinkRepo>();
+            services.AddScoped<IShortLinkKeyGenerationService, ShortLinkKeyGenerationService>();
+            services.AddScoped<IShortLinkCache, ShortLinkCache>();
+            services.AddScoped<IShortLinkKeyCache, ShortLinkKeyCache>();
+            services.AddScoped<IShortLinkService, ShortLinkService>();
+            services.AddScoped<IUrlUtil, UrlUtil>();
 
             services.AddControllers();
 

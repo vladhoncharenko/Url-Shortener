@@ -13,17 +13,17 @@ namespace UrlShortenerService.Controllers
     public class UrlShortenerController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly ShortLinkService _shortLinkService;
+        private readonly IShortLinkService _shortLinkService;
         private readonly ILogger<UrlShortenerController> _logger;
 
-        public UrlShortenerController(ILogger<UrlShortenerController> logger, ShortLinkService shortLinkService, IMapper mapper)
+        public UrlShortenerController(ILogger<UrlShortenerController> logger, IShortLinkService shortLinkService, IMapper mapper)
         {
             _logger = logger;
             _mapper = mapper;
             _shortLinkService = shortLinkService;
         }
 
-        [HttpPut("{url}", Name = "CreateAShortLink")]
+        [HttpPut(Name = "CreateAShortLink")]
         public async Task<ActionResult<string>> Put(ShortLinkCreateDTO shortLinkCreateDTO)
         {
             var createdShortLink = await _shortLinkService.AddNewShortLinkAsync(shortLinkCreateDTO);

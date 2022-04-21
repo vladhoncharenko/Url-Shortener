@@ -3,7 +3,7 @@ using UrlShortenerService.Models;
 
 namespace UrlShortenerService.Cache
 {
-    public class ShortLinkKeyCache
+    public class ShortLinkKeyCache : IShortLinkKeyCache
     {
         private Stack<ShortLinkKey> shortLinkKeys = new Stack<ShortLinkKey>() { };
 
@@ -14,7 +14,7 @@ namespace UrlShortenerService.Cache
 
         public ShortLinkKey GetShortLinkKey()
         {
-            return shortLinkKeys.Pop();
+            return shortLinkKeys.Count > 0 ? shortLinkKeys.Pop() : null;
         }
 
         public void AddShortLinkKeys(IEnumerable<ShortLinkKey> newShortLinkKeys)

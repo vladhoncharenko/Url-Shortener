@@ -5,7 +5,7 @@ using UrlShortenerService.Models;
 
 namespace UrlShortenerService.Cache
 {
-    public class ShortLinkCache
+    public class ShortLinkCache : IShortLinkCache
     {
         private List<ShortLink> shortLinkKeys = new List<ShortLink>() { };
 

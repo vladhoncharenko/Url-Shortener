@@ -11,10 +11,10 @@ namespace UrlShortenerService.Data
     public class ShortLinkKeyRepo : IShortLinkKeyRepo
     {
         private readonly AppDbContext _context;
-        private readonly ShortLinkKeyCache _shortLinkKeyCache;
-        private readonly ShortLinkKeyGenerationService _shortLinkKeyGenerationService;
+        private readonly IShortLinkKeyCache _shortLinkKeyCache;
+        private readonly IShortLinkKeyGenerationService _shortLinkKeyGenerationService;
 
-        public ShortLinkKeyRepo(AppDbContext context, ShortLinkKeyGenerationService shortLinkKeyGenerationService, ShortLinkKeyCache shortLinkKeyCache)
+        public ShortLinkKeyRepo(AppDbContext context, IShortLinkKeyGenerationService shortLinkKeyGenerationService, IShortLinkKeyCache shortLinkKeyCache)
         {
             _context = context;
             _shortLinkKeyGenerationService = shortLinkKeyGenerationService;
@@ -26,13 +26,13 @@ namespace UrlShortenerService.Data
             if (keysAmount <= 0)
                 throw new ArgumentOutOfRangeException(nameof(keysAmount));
 
-            var shortLinkKeys = _context.ShortLinkKeys.Where(k => !k.IsUsed).Take(keysAmount);
-            shortLinkKeys.ToList().ForEach(k => k.IsUsed = true);
-
             if (_context.ShortLinkKeys.Where(k => !k.IsUsed).Count() <= 1000)
             {
                 await GenerateNewShortLinkKeysAsync(1000);
             }
+
+            var shortLinkKeys = _context.ShortLinkKeys.Where(k => !k.IsUsed).Take(keysAmount);
+            shortLinkKeys.ToList().ForEach(k => k.IsUsed = true);
 
             await SaveChangesAsync();
 

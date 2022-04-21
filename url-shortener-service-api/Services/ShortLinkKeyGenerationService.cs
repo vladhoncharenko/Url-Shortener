@@ -5,13 +5,13 @@ using UrlShortenerService.Models;
 
 namespace UrlShortenerService.Services
 {
-    public class ShortLinkKeyGenerationService
+    public class ShortLinkKeyGenerationService : IShortLinkKeyGenerationService
     {
         private readonly Random _random;
         private const int amountOfCharsInLinkKey = 6;
         private const string allowedCharsInLinkKey = "abcdefghijklmnopqrstuvwxyz1234567890";
 
-        ShortLinkKeyGenerationService()
+        public ShortLinkKeyGenerationService()
         {
             _random = new Random();
         }

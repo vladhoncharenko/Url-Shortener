@@ -9,14 +9,14 @@ using UrlShortenerService.Utils;
 
 namespace UrlShortenerService.Services
 {
-    public class ShortLinkService
+    public class ShortLinkService : IShortLinkService
     {
         private readonly IShortLinkRepo _shortLinkRepo;
         private readonly IShortLinkKeyRepo _shortLinkKeyRepo;
         private readonly ILogger<ShortLinkService> _logger;
-        private readonly UrlUtil _urlUtil;
+        private readonly IUrlUtil _urlUtil;
 
-        public ShortLinkService(ILogger<ShortLinkService> logger, IShortLinkKeyRepo shortLinkKeyRepo, IShortLinkRepo shortLinkRepo, UrlUtil urlUtil)
+        public ShortLinkService(ILogger<ShortLinkService> logger, IShortLinkKeyRepo shortLinkKeyRepo, IShortLinkRepo shortLinkRepo, IUrlUtil urlUtil)
         {
             _logger = logger;
             _shortLinkRepo = shortLinkRepo;

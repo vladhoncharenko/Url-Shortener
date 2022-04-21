@@ -10,9 +10,9 @@ namespace UrlShortenerService.Data
     public class ShortLinkRepo : IShortLinkRepo
     {
         private readonly AppDbContext _context;
-        private readonly ShortLinkCache _shortLinkCache;
+        private readonly IShortLinkCache _shortLinkCache;
 
-        public ShortLinkRepo(AppDbContext context, ShortLinkCache shortLinkCache)
+        public ShortLinkRepo(AppDbContext context, IShortLinkCache shortLinkCache)
         {
             _context = context;
             _shortLinkCache = shortLinkCache;
