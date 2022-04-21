@@ -1,18 +1,43 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UrlShortenerService.Models;
 
 namespace UrlShortenerService.Services
 {
     public class ShortLinkKeyGenerationService
     {
+        private readonly Random _random;
+        private const int amountOfCharsInLinkKey = 6;
+        private const string allowedCharsInLinkKey = "abcdefghijklmnopqrstuvwxyz1234567890";
+
         ShortLinkKeyGenerationService()
         {
-
+            _random = new Random();
         }
 
-        IEnumerable<ShortLinkKey> GenerateNewShortLinkKeys(int shortLinkKeysAmount)
+        public IEnumerable<ShortLinkKey> GenerateNewShortLinkKeys(int shortLinkKeysAmount)
         {
-            return null;
+            if (shortLinkKeysAmount <= 0)
+                throw new ArgumentOutOfRangeException(nameof(shortLinkKeysAmount));
+
+            return Enumerable.Range(0, shortLinkKeysAmount).Select(n => CreateNewShortLinkKey(amountOfCharsInLinkKey)).ToList();
+        }
+
+        public ShortLinkKey CreateNewShortLinkKey(int keySymbolsAmount)
+        {
+            if (keySymbolsAmount <= 0)
+                throw new ArgumentOutOfRangeException(nameof(keySymbolsAmount));
+
+            return new ShortLinkKey { LinkKey = GenarateLinkKey(keySymbolsAmount) };
+        }
+
+        public string GenarateLinkKey(int symbolsAmount)
+        {
+            if (symbolsAmount <= 0)
+                throw new ArgumentOutOfRangeException(nameof(symbolsAmount));
+
+            return new string(Enumerable.Range(1, symbolsAmount).Select(_ => allowedCharsInLinkKey[_random.Next(allowedCharsInLinkKey.Length)]).ToArray());
         }
     }
 }
