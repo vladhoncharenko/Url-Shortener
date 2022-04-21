@@ -8,5 +8,9 @@ namespace UrlShortenerService.Data
         bool SaveChanges();
 
         IEnumerable<ShortLinkKey> GetShortLinkKeys(int keysAmount);
+
+        void GenerateNewShortLinkKeys(int shortLinkKeysAmount);
+
+        bool AreNewShortLinkKeysNeeded();
     }
 }

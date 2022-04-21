@@ -7,6 +7,12 @@ namespace UrlShortenerService.Data
     {
         bool SaveChanges();
 
-        IEnumerable<ShortLink> GetAllShortenedLinks();
+        IEnumerable<ShortLink> GetShortLinks(int page, int pageCapacity);
+
+        ShortLink GetShortLink(string shortLinkKey);
+
+        void AddShortLink(ShortLink shortLink);
+
+        void RegisterShortLinkRedirect(string shortLinkKey);
     }
 }
