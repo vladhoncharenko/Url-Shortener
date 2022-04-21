@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using UrlShortenerService.DTOs;
+using UrlShortenerService.Models;
 using UrlShortenerService.Services;
 
 namespace UrlShortenerService.Controllers
@@ -26,8 +29,28 @@ namespace UrlShortenerService.Controllers
         [HttpPut(Name = "CreateAShortLink")]
         public async Task<ActionResult<string>> Put(ShortLinkCreateDTO shortLinkCreateDTO)
         {
-            var createdShortLink = await _shortLinkService.AddNewShortLinkAsync(shortLinkCreateDTO);
-            var shortLinkOutput = _mapper.Map<ShortLinkReadDTO>(createdShortLink);
+            if (!ModelState.IsValid)
+                return BadRequest("Please pass a valid URL.");
+
+            ShortLinkReadDTO shortLinkOutput;
+
+            try
+            {
+                var createdShortLink = await _shortLinkService.AddNewShortLinkAsync(shortLinkCreateDTO);
+                shortLinkOutput = _mapper.Map<ShortLinkReadDTO>(createdShortLink);
+            }
+            catch (Exception e)
+            {
+                if (e is ArgumentException || e is ArgumentOutOfRangeException)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    _logger.LogError("Issue during creating a new short link:", e.Message, e.InnerException);
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+            }
 
             return Created(nameof(Get), shortLinkOutput);
         }
@@ -35,7 +58,27 @@ namespace UrlShortenerService.Controllers
         [HttpGet("/{shortLinkKey}", Name = "RedirectToTheOriginalLink")]
         public async Task<ActionResult> Get(string shortLinkKey)
         {
-            var shortLinkUrl = await _shortLinkService.GetShortLinkRedirectUrlAsync(shortLinkKey);
+            if (string.IsNullOrEmpty(shortLinkKey) || shortLinkKey.Length > 6)
+                return BadRequest("Link Key should be six characters alphanumeric string.");
+
+            string shortLinkUrl;
+
+            try
+            {
+                shortLinkUrl = await _shortLinkService.GetShortLinkRedirectUrlAsync(shortLinkKey);
+            }
+            catch (Exception e)
+            {
+                if (e is ArgumentException || e is ArgumentOutOfRangeException)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    _logger.LogError("Issue during resolving a short link:", e.Message, e.InnerException);
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+            }
 
             return RedirectPermanent(shortLinkUrl);
         }
@@ -43,7 +86,28 @@ namespace UrlShortenerService.Controllers
         [HttpGet("{page}/{pageCapacity}", Name = "GetShortenedUrls")]
         public ActionResult<IEnumerable<ShortLinkReadDTO>> GetShortenedUrls(int page, int pageCapacity = 10)
         {
-            var shortLinks = _shortLinkService.GetShortLinks(page, pageCapacity);
+            if (page <= 0 || pageCapacity <= 0)
+                return BadRequest("Page Number and Page Capacity should be greater than zero.");
+
+            IEnumerable<ShortLink> shortLinks;
+
+            try
+            {
+                shortLinks = _shortLinkService.GetShortLinks(page, pageCapacity);
+            }
+            catch (Exception e)
+            {
+                if (e is ArgumentException || e is ArgumentOutOfRangeException)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    _logger.LogError("Issue during getting a list of short links:", e.Message, e.InnerException);
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+            }
+
 
             return Ok(_mapper.Map<IEnumerable<ShortLinkReadDTO>>(shortLinks));
         }

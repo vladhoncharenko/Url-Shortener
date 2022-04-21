@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using UrlShortenerService.Data;
@@ -27,6 +26,9 @@ namespace UrlShortenerService.Services
 
         public async Task<ShortLink> AddNewShortLinkAsync(ShortLinkCreateDTO shortLinkCreateDTO)
         {
+            if (shortLinkCreateDTO == null || shortLinkCreateDTO.OriginalUrl == null)
+                throw new ArgumentException(nameof(shortLinkCreateDTO));
+
             var shortLinkKey = await _shortLinkKeyRepo.GetShortLinkKeyAsync();
             var createdShortLink = new ShortLink()
             {
@@ -34,7 +36,7 @@ namespace UrlShortenerService.Services
                 OriginalUrl = shortLinkCreateDTO.OriginalUrl,
                 CreatedOn = DateTime.UtcNow
             };
-            
+
             await _shortLinkRepo.AddShortLinkAsync(createdShortLink);
             await _shortLinkRepo.SaveChangesAsync();
 
@@ -43,6 +45,9 @@ namespace UrlShortenerService.Services
 
         public async Task<string> GetShortLinkRedirectUrlAsync(string shortLinkKey)
         {
+            if (string.IsNullOrEmpty(shortLinkKey))
+                throw new ArgumentException(nameof(shortLinkKey));
+
             var shortLink = await _shortLinkRepo.ResolveShortLinkAsync(shortLinkKey);
 
             return shortLink.OriginalUrl;
@@ -50,6 +55,12 @@ namespace UrlShortenerService.Services
 
         public IEnumerable<ShortLink> GetShortLinks(int page, int pageCapacity)
         {
+            if (page <= 0)
+                throw new ArgumentOutOfRangeException(nameof(page));
+
+            if (pageCapacity <= 0)
+                throw new ArgumentOutOfRangeException(nameof(pageCapacity));
+
             var shortLinks = _shortLinkRepo.GetShortLinks(page, pageCapacity);
 
             return shortLinks;
