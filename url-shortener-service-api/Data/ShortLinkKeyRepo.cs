@@ -26,9 +26,11 @@ namespace UrlShortenerService.Data
             if (keysAmount <= 0)
                 throw new ArgumentOutOfRangeException(nameof(keysAmount));
 
-            if (_context.ShortLinkKeys.Where(k => !k.IsUsed).Count() <= 1000)
+            await _context.Database.EnsureCreatedAsync();
+
+            if (_context.ShortLinkKeys.Where(k => !k.IsUsed).Count() <= 50)
             {
-                await GenerateNewShortLinkKeysAsync(1000);
+                await GenerateNewShortLinkKeysAsync(50);
             }
 
             var shortLinkKeys = _context.ShortLinkKeys.Where(k => !k.IsUsed).Take(keysAmount);
@@ -52,7 +54,7 @@ namespace UrlShortenerService.Data
             var shortLinkKey = _shortLinkKeyCache.GetShortLinkKey();
             if (shortLinkKey == null)
             {
-                _shortLinkKeyCache.AddShortLinkKeys(await GetShortLinkKeysAsync(100));
+                _shortLinkKeyCache.AddShortLinkKeys(await GetShortLinkKeysAsync(50));
                 shortLinkKey = _shortLinkKeyCache.GetShortLinkKey();
             }
 

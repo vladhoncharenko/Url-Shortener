@@ -15,16 +15,30 @@ namespace UrlShortenerService
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            CurrentEnvironment = env;
         }
 
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment CurrentEnvironment { get; set; }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("InMem"));
+            if (CurrentEnvironment.IsDevelopment())
+            {
+                services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("InMem"));
+            }
+            else
+            {
+                services.AddDbContext<AppDbContext>(options =>
+                                  options.UseCosmos(Configuration.GetValue<string>("CosmosDb:Account"),
+                                  Configuration.GetValue<string>("CosmosDb:Key"),
+                                  Configuration.GetValue<string>("CosmosDb:DatabaseName"))
+                              );
+            }
+
             services.AddScoped<IShortLinkKeyRepo, ShortLinkKeyRepo>();
             services.AddScoped<IShortLinkRepo, ShortLinkRepo>();
             services.AddScoped<IShortLinkKeyGenerationService, ShortLinkKeyGenerationService>();
@@ -51,6 +65,7 @@ namespace UrlShortenerService
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "UrlShortenerService v1"));
+                PrepDb.PrepPopulation(app);
             }
 
             app.UseHttpsRedirection();
@@ -63,8 +78,6 @@ namespace UrlShortenerService
             {
                 endpoints.MapControllers();
             });
-
-            PrepDb.PrepPopulation(app);
         }
     }
 }
