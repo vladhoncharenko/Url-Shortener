@@ -24,7 +24,6 @@ namespace UrlShortenerService.Data
                 throw new ArgumentNullException(nameof(shortLink));
 
             await _context.ShortLinks.AddAsync(shortLink);
-            _shortLinkCache.AddShortLinkToCache(shortLink);
         }
 
         public async Task<ShortLink> ResolveShortLinkAsync(string shortLinkKey)
@@ -32,13 +31,7 @@ namespace UrlShortenerService.Data
             if (String.IsNullOrEmpty(shortLinkKey))
                 throw new ArgumentNullException(nameof(shortLinkKey));
 
-            var shortLink = _shortLinkCache.GetShortLinkFromCache(shortLinkKey);
-            if (shortLink == null)
-            {
-                shortLink = _context.ShortLinks.FirstOrDefault(p => p.LinkKey.Equals(shortLinkKey));
-                if (shortLink != null)
-                    _shortLinkCache.AddShortLinkToCache(shortLink);
-            }
+            var shortLink = _context.ShortLinks.FirstOrDefault(p => p.LinkKey.Equals(shortLinkKey));
 
             if (shortLink == null || String.IsNullOrEmpty(shortLink.OriginalUrl))
                 throw new ArgumentNullException(nameof(shortLinkKey));
