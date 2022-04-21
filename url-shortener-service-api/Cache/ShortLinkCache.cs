@@ -7,7 +7,7 @@ namespace UrlShortenerService.Cache
 {
     public class ShortLinkCache : IShortLinkCache
     {
-        private List<ShortLink> shortLinkKeys = new List<ShortLink>() { };
+        private static List<ShortLink> shortLinks = new List<ShortLink>() { };
 
         public ShortLinkCache()
         {
@@ -16,15 +16,14 @@ namespace UrlShortenerService.Cache
 
         public ShortLink GetShortLinkFromCache(string shortLinkKey)
         {
-            var item = shortLinkKeys.First(x => x.LinkKey == shortLinkKey);
-            shortLinkKeys.Remove(item);
+            var item = shortLinks.First(x => x.LinkKey == shortLinkKey);
 
             return item;
         }
 
         public void AddShortLinkToCache(ShortLink shortLink)
         {
-            shortLinkKeys.Add(shortLink);
+            shortLinks.Add(shortLink);
         }
     }
 }

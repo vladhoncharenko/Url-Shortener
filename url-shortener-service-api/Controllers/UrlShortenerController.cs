@@ -32,10 +32,10 @@ namespace UrlShortenerService.Controllers
             return Created(nameof(Get), shortLinkOutput);
         }
 
-        [HttpGet("/{url}", Name = "RedirectToTheOriginalLink")]
-        public async Task<ActionResult> Get(string shortLinkKeyWithUrl)
+        [HttpGet("/{shortLinkKey}", Name = "RedirectToTheOriginalLink")]
+        public async Task<ActionResult> Get(string shortLinkKey)
         {
-            var shortLinkUrl = await _shortLinkService.GetShortLinkRedirectUrlAsync(shortLinkKeyWithUrl);
+            var shortLinkUrl = await _shortLinkService.GetShortLinkRedirectUrlAsync(shortLinkKey);
 
             return RedirectPermanent(shortLinkUrl);
         }
@@ -43,9 +43,9 @@ namespace UrlShortenerService.Controllers
         [HttpGet("{page}/{pageCapacity}", Name = "GetShortenedUrls")]
         public ActionResult<IEnumerable<ShortLinkReadDTO>> GetShortenedUrls(int page, int pageCapacity = 10)
         {
-            var shortLinkUrls = _shortLinkService.GetShortLinks(page, pageCapacity);
+            var shortLinks = _shortLinkService.GetShortLinks(page, pageCapacity);
 
-            return Ok(shortLinkUrls);
+            return Ok(_mapper.Map<IEnumerable<ShortLinkReadDTO>>(shortLinks));
         }
     }
 }

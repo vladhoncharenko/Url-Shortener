@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using UrlShortenerService.Data;
@@ -40,9 +41,8 @@ namespace UrlShortenerService.Services
             return createdShortLink;
         }
 
-        public async Task<string> GetShortLinkRedirectUrlAsync(string shortLinkKeyWithUrl)
+        public async Task<string> GetShortLinkRedirectUrlAsync(string shortLinkKey)
         {
-            var shortLinkKey = _urlUtil.GetShortLinkKeyFromUrl(shortLinkKeyWithUrl);
             var shortLink = await _shortLinkRepo.ResolveShortLinkAsync(shortLinkKey);
 
             return shortLink.OriginalUrl;

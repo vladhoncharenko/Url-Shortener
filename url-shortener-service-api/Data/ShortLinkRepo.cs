@@ -59,7 +59,7 @@ namespace UrlShortenerService.Data
             if (pageCapacity <= 0)
                 throw new ArgumentOutOfRangeException(nameof(pageCapacity));
 
-            return _context.ShortLinks.Skip(page * pageCapacity).Take(pageCapacity);
+            return _context.ShortLinks.Skip((page - 1) * pageCapacity).Take(pageCapacity);
         }
 
         public async Task<bool> SaveChangesAsync()

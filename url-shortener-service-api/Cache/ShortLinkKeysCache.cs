@@ -5,7 +5,7 @@ namespace UrlShortenerService.Cache
 {
     public class ShortLinkKeyCache : IShortLinkKeyCache
     {
-        private Stack<ShortLinkKey> shortLinkKeys = new Stack<ShortLinkKey>() { };
+        private static Stack<ShortLinkKey> shortLinkKeys = new Stack<ShortLinkKey>() { };
 
         public ShortLinkKeyCache()
         {
