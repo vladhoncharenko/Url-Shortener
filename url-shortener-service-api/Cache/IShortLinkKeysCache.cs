@@ -5,8 +5,8 @@ namespace UrlShortenerService.Cache
 {
     public interface IShortLinkKeyCache
     {
-        public ShortLinkKey GetShortLinkKey();
+        public ShortLinkKey Get();
 
-        public void AddShortLinkKeys(IEnumerable<ShortLinkKey> newShortLinkKeys);
+        public void Add(IEnumerable<ShortLinkKey> newShortLinkKeys);
     }
 }

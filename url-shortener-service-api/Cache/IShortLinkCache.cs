@@ -1,11 +1,12 @@
+using System.Threading.Tasks;
 using UrlShortenerService.Models;
 
 namespace UrlShortenerService.Cache
 {
     public interface IShortLinkCache
     {
-        ShortLink GetShortLinkFromCache(string shortLinkKey);
+        Task<ShortLink> GetAsync(string shortLinkKey);
 
-        void AddShortLinkToCache(ShortLink shortLink);
+        Task AddAsync(ShortLink shortLink);
     }
 }

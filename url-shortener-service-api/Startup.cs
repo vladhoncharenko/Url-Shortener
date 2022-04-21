@@ -39,6 +39,11 @@ namespace UrlShortenerService
                               );
             }
 
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = $"{Configuration.GetValue<string>("Redis:Server")}:{Configuration.GetValue<int>("Redis:Port")}";
+            });
+
             services.AddScoped<IShortLinkKeyRepo, ShortLinkKeyRepo>();
             services.AddScoped<IShortLinkRepo, ShortLinkRepo>();
             services.AddScoped<IShortLinkKeyGenerationService, ShortLinkKeyGenerationService>();
@@ -46,6 +51,7 @@ namespace UrlShortenerService
             services.AddScoped<IShortLinkKeyCache, ShortLinkKeyCache>();
             services.AddScoped<IShortLinkService, ShortLinkService>();
             services.AddScoped<IUrlUtil, UrlUtil>();
+            services.AddScoped<IRedisCacheService, RedisCacheService>();
 
             services.AddControllers();
 

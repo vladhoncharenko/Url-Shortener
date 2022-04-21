@@ -24,6 +24,7 @@ namespace UrlShortenerService.Data
                 throw new ArgumentNullException(nameof(shortLink));
 
             await _context.ShortLinks.AddAsync(shortLink);
+            await _shortLinkCache.AddAsync(shortLink);
         }
 
         public async Task<ShortLink> ResolveShortLinkAsync(string shortLinkKey)

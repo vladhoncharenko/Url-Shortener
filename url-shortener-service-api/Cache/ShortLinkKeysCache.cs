@@ -5,20 +5,21 @@ namespace UrlShortenerService.Cache
 {
     public class ShortLinkKeyCache : IShortLinkKeyCache
     {
-        private static Stack<ShortLinkKey> shortLinkKeys = new Stack<ShortLinkKey>() { };
+        private Stack<ShortLinkKey> shortLinkKeys = new Stack<ShortLinkKey>() { };
 
         public ShortLinkKeyCache()
         {
 
         }
 
-        public ShortLinkKey GetShortLinkKey()
+        public ShortLinkKey Get()
         {
             return shortLinkKeys.Count > 0 ? shortLinkKeys.Pop() : null;
         }
 
-        public void AddShortLinkKeys(IEnumerable<ShortLinkKey> newShortLinkKeys)
+        public void Add(IEnumerable<ShortLinkKey> newShortLinkKeys)
         {
+
             shortLinkKeys = new Stack<ShortLinkKey>(newShortLinkKeys) { };
         }
     }

@@ -51,11 +51,11 @@ namespace UrlShortenerService.Data
 
         public async Task<ShortLinkKey> GetShortLinkKeyAsync()
         {
-            var shortLinkKey = _shortLinkKeyCache.GetShortLinkKey();
+            var shortLinkKey = _shortLinkKeyCache.Get();
             if (shortLinkKey == null)
             {
-                _shortLinkKeyCache.AddShortLinkKeys(await GetShortLinkKeysAsync(50));
-                shortLinkKey = _shortLinkKeyCache.GetShortLinkKey();
+                _shortLinkKeyCache.Add(await GetShortLinkKeysAsync(50));
+                shortLinkKey = _shortLinkKeyCache.Get();
             }
 
             return shortLinkKey;

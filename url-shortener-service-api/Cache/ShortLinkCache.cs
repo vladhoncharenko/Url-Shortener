@@ -1,29 +1,26 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 using UrlShortenerService.Models;
+using UrlShortenerService.Services;
 
 namespace UrlShortenerService.Cache
 {
     public class ShortLinkCache : IShortLinkCache
     {
-        private static List<ShortLink> shortLinks = new List<ShortLink>() { };
+        private readonly IRedisCacheService _cache;
 
-        public ShortLinkCache()
+        public ShortLinkCache(IRedisCacheService cache)
         {
-
+            _cache = cache;
         }
 
-        public ShortLink GetShortLinkFromCache(string shortLinkKey)
+        public async Task<ShortLink> GetAsync(string shortLinkKey)
         {
-            var item = shortLinks.First(x => x.LinkKey == shortLinkKey);
-
-            return item;
+            return await _cache.GetAsync<ShortLink>(shortLinkKey);
         }
 
-        public void AddShortLinkToCache(ShortLink shortLink)
+        public async Task AddAsync(ShortLink shortLink)
         {
-            shortLinks.Add(shortLink);
+            await _cache.SetAsync<ShortLink>(shortLink.LinkKey, shortLink);
         }
     }
 }
