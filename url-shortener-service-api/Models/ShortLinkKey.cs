@@ -7,5 +7,8 @@ namespace UrlShortenerService.Models
         [Key]
         [Required]
         public string LinkKey { get; set; }
+
+        [Required]
+        public bool IsUsed { get; set; } = true;
     }
 }
