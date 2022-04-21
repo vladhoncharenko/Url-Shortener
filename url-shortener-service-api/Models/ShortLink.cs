@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using UrlShortenerService.Data;
 
 namespace UrlShortenerService.Models
 {
@@ -21,24 +20,5 @@ namespace UrlShortenerService.Models
 
         [Required]
         public DateTime LastRedirect { get; set; }
-
-        public ShortLink()
-        {
-
-        }
-
-        public ShortLink(string originalUrl)
-        {
-            LinkKey = _shortLinkKeyRepo.GetShortLinkKey().LinkKey;
-            OriginalUrl = originalUrl;
-            CreatedOn = DateTime.UtcNow;
-        }
-
-        public ShortLink(ShortLinkKeyRepo shortLinkKeyRepo)
-        {
-            _shortLinkKeyRepo = shortLinkKeyRepo;
-        }
-
-        private ShortLinkKeyRepo _shortLinkKeyRepo;
     }
 }

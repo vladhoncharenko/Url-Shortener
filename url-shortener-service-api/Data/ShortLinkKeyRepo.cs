@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UrlShortenerService.Cache;
 using UrlShortenerService.Models;
 using UrlShortenerService.Services;
@@ -20,7 +21,7 @@ namespace UrlShortenerService.Data
             _shortLinkKeyCache = shortLinkKeyCache;
         }
 
-        public IEnumerable<ShortLinkKey> GetShortLinkKeys(int keysAmount)
+        public async Task<IEnumerable<ShortLinkKey>> GetShortLinkKeysAsync(int keysAmount)
         {
             if (keysAmount <= 0)
                 throw new ArgumentOutOfRangeException(nameof(keysAmount));
@@ -30,37 +31,37 @@ namespace UrlShortenerService.Data
 
             if (_context.ShortLinkKeys.Where(k => !k.IsUsed).Count() <= 1000)
             {
-                GenerateNewShortLinkKeys(1000);
+                await GenerateNewShortLinkKeysAsync(1000);
             }
 
-            SaveChanges();
+            await SaveChangesAsync();
 
             return shortLinkKeys;
         }
 
-        public void GenerateNewShortLinkKeys(int shortLinkKeysAmount)
+        public async Task GenerateNewShortLinkKeysAsync(int shortLinkKeysAmount)
         {
             if (shortLinkKeysAmount <= 0)
                 throw new ArgumentOutOfRangeException(nameof(shortLinkKeysAmount));
 
-            _context.ShortLinkKeys.AddRange(_shortLinkKeyGenerationService.GenerateNewShortLinkKeys(shortLinkKeysAmount));
+            await _context.ShortLinkKeys.AddRangeAsync(_shortLinkKeyGenerationService.GenerateNewShortLinkKeys(shortLinkKeysAmount));
         }
 
-        public ShortLinkKey GetShortLinkKey()
+        public async Task<ShortLinkKey> GetShortLinkKeyAsync()
         {
             var shortLinkKey = _shortLinkKeyCache.GetShortLinkKey();
             if (shortLinkKey == null)
             {
-                _shortLinkKeyCache.AddShortLinkKeys(GetShortLinkKeys(100));
+                _shortLinkKeyCache.AddShortLinkKeys(await GetShortLinkKeysAsync(100));
                 shortLinkKey = _shortLinkKeyCache.GetShortLinkKey();
             }
 
             return shortLinkKey;
         }
 
-        public bool SaveChanges()
+        public async Task<bool> SaveChangesAsync()
         {
-            return (_context.SaveChanges() > 0);
+            return (await _context.SaveChangesAsync() > 0);
         }
     }
 }

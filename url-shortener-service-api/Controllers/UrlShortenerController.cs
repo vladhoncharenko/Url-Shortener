@@ -3,9 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using UrlShortenerService.Data;
 using UrlShortenerService.DTOs;
-using UrlShortenerService.Models;
 using UrlShortenerService.Services;
 
 namespace UrlShortenerService.Controllers
@@ -28,7 +26,7 @@ namespace UrlShortenerService.Controllers
         [HttpPut("{url}", Name = "CreateAShortLink")]
         public async Task<ActionResult<string>> Put(ShortLinkCreateDTO shortLinkCreateDTO)
         {
-            var createdShortLink = _shortLinkService.AddNewShortLink(shortLinkCreateDTO);
+            var createdShortLink = await _shortLinkService.AddNewShortLinkAsync(shortLinkCreateDTO);
             var shortLinkOutput = _mapper.Map<ShortLinkReadDTO>(createdShortLink);
 
             return Created(nameof(Get), shortLinkOutput);
@@ -37,13 +35,13 @@ namespace UrlShortenerService.Controllers
         [HttpGet("/{url}", Name = "RedirectToTheOriginalLink")]
         public async Task<ActionResult> Get(string shortLinkKeyWithUrl)
         {
-            var shortLinkUrl = _shortLinkService.GetShortLinkRedirectUrl(shortLinkKeyWithUrl);
+            var shortLinkUrl = await _shortLinkService.GetShortLinkRedirectUrlAsync(shortLinkKeyWithUrl);
 
             return RedirectPermanent(shortLinkUrl);
         }
 
         [HttpGet("{page}/{pageCapacity}", Name = "GetShortenedUrls")]
-        public async Task<ActionResult<IEnumerable<ShortLinkReadDTO>>> GetShortenedUrls(int page, int pageCapacity = 10)
+        public ActionResult<IEnumerable<ShortLinkReadDTO>> GetShortenedUrls(int page, int pageCapacity = 10)
         {
             var shortLinkUrls = _shortLinkService.GetShortLinks(page, pageCapacity);
 

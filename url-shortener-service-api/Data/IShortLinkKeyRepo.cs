@@ -1,16 +1,17 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UrlShortenerService.Models;
 
 namespace UrlShortenerService.Data
 {
     public interface IShortLinkKeyRepo
     {
-        bool SaveChanges();
+        Task<bool> SaveChangesAsync();
 
-        IEnumerable<ShortLinkKey> GetShortLinkKeys(int keysAmount);
+        Task<IEnumerable<ShortLinkKey>> GetShortLinkKeysAsync(int keysAmount);
 
-        ShortLinkKey GetShortLinkKey();
+        Task<ShortLinkKey> GetShortLinkKeyAsync();
 
-        void GenerateNewShortLinkKeys(int shortLinkKeysAmount);
+        Task GenerateNewShortLinkKeysAsync(int shortLinkKeysAmount);
     }
 }

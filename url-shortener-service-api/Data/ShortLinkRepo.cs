@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UrlShortenerService.Cache;
 using UrlShortenerService.Models;
 
@@ -17,16 +18,16 @@ namespace UrlShortenerService.Data
             _shortLinkCache = shortLinkCache;
         }
 
-        public void AddShortLink(ShortLink shortLink)
+        public async Task AddShortLinkAsync(ShortLink shortLink)
         {
             if (shortLink == null)
                 throw new ArgumentNullException(nameof(shortLink));
 
-            _context.ShortLinks.Add(shortLink);
+            await _context.ShortLinks.AddAsync(shortLink);
             _shortLinkCache.AddShortLinkToCache(shortLink);
         }
 
-        public ShortLink ResolveShortLink(string shortLinkKey)
+        public async Task<ShortLink> ResolveShortLinkAsync(string shortLinkKey)
         {
             if (String.IsNullOrEmpty(shortLinkKey))
                 throw new ArgumentNullException(nameof(shortLinkKey));
@@ -45,7 +46,7 @@ namespace UrlShortenerService.Data
             shortLink.LastRedirect = DateTime.UtcNow;
             shortLink.RedirectsCount += 1;
 
-            SaveChanges();
+            await SaveChangesAsync();
 
             return shortLink;
         }
@@ -61,9 +62,9 @@ namespace UrlShortenerService.Data
             return _context.ShortLinks.Skip(page * pageCapacity).Take(pageCapacity);
         }
 
-        public bool SaveChanges()
+        public async Task<bool> SaveChangesAsync()
         {
-            return (_context.SaveChanges() > 0);
+            return (await _context.SaveChangesAsync() > 0);
         }
     }
 }

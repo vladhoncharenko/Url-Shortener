@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using UrlShortenerService.Data;
 using UrlShortenerService.DTOs;
@@ -22,19 +24,26 @@ namespace UrlShortenerService.Services
             _urlUtil = urlUtil;
         }
 
-        public ShortLink AddNewShortLink(ShortLinkCreateDTO shortLinkCreateDTO)
+        public async Task<ShortLink> AddNewShortLinkAsync(ShortLinkCreateDTO shortLinkCreateDTO)
         {
-            var createdShortLink = new ShortLink(shortLinkCreateDTO.OriginalUrl);
-            _shortLinkRepo.AddShortLink(createdShortLink);
-            _shortLinkRepo.SaveChanges();
+            var shortLinkKey = await _shortLinkKeyRepo.GetShortLinkKeyAsync();
+            var createdShortLink = new ShortLink()
+            {
+                LinkKey = shortLinkKey.LinkKey,
+                OriginalUrl = shortLinkCreateDTO.OriginalUrl,
+                CreatedOn = DateTime.UtcNow
+            };
+            
+            await _shortLinkRepo.AddShortLinkAsync(createdShortLink);
+            await _shortLinkRepo.SaveChangesAsync();
 
             return createdShortLink;
         }
 
-        public string GetShortLinkRedirectUrl(string shortLinkKeyWithUrl)
+        public async Task<string> GetShortLinkRedirectUrlAsync(string shortLinkKeyWithUrl)
         {
             var shortLinkKey = _urlUtil.GetShortLinkKeyFromUrl(shortLinkKeyWithUrl);
-            var shortLink = _shortLinkRepo.ResolveShortLink(shortLinkKey);
+            var shortLink = await _shortLinkRepo.ResolveShortLinkAsync(shortLinkKey);
 
             return shortLink.OriginalUrl;
         }
