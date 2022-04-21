@@ -22,12 +22,22 @@ namespace UrlShortenerService.Data
             _context.ShortLinks.Add(shortLink);
         }
 
-        public ShortLink GetShortLink(string shortLinkKey)
+        public ShortLink ResolveShortLink(string shortLinkKey)
         {
             if (String.IsNullOrEmpty(shortLinkKey))
                 throw new ArgumentNullException(nameof(shortLinkKey));
 
-            return _context.ShortLinks.FirstOrDefault(p => p.LinkKey.Equals(shortLinkKey));
+            var shortLink = _context.ShortLinks.FirstOrDefault(p => p.LinkKey.Equals(shortLinkKey));
+
+            if (shortLink == null || String.IsNullOrEmpty(shortLink.OriginalUrl))
+                throw new ArgumentNullException(nameof(shortLinkKey));
+
+            shortLink.LastRedirect = DateTime.UtcNow;
+            shortLink.RedirectsCount += 1;
+
+            SaveChanges();
+
+            return shortLink;
         }
 
         public IEnumerable<ShortLink> GetShortLinks(int page, int pageCapacity)
@@ -39,13 +49,6 @@ namespace UrlShortenerService.Data
                 throw new ArgumentOutOfRangeException(nameof(pageCapacity));
 
             return _context.ShortLinks.Skip(page * pageCapacity).Take(pageCapacity);
-        }
-
-        public void RegisterShortLinkRedirect(string shortLinkKey)
-        {
-            var shortLink = GetShortLink(shortLinkKey);
-            shortLink.LastRedirect = DateTime.UtcNow;
-            shortLink.RedirectsCount += 1;
         }
 
         public bool SaveChanges()

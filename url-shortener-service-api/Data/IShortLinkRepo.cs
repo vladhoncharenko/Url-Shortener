@@ -9,10 +9,8 @@ namespace UrlShortenerService.Data
 
         IEnumerable<ShortLink> GetShortLinks(int page, int pageCapacity);
 
-        ShortLink GetShortLink(string shortLinkKey);
+        ShortLink ResolveShortLink(string shortLinkKey);
 
         void AddShortLink(ShortLink shortLink);
-
-        void RegisterShortLinkRedirect(string shortLinkKey);
     }
 }
