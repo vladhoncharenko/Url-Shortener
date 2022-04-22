@@ -18,31 +18,17 @@ namespace UrlShortenerService.Data
             _cache = cache;
         }
 
+        public ShortUrl Get(string shortUrlKey)
+        {
+            return _context.ShortUrls.FirstOrDefault(p => p.UrlKey.Equals(shortUrlKey));
+        }
+
         public async Task AddAsync(ShortUrl shortUrl)
         {
             if (shortUrl == null)
                 throw new ArgumentNullException(nameof(shortUrl));
 
             await _context.ShortUrls.AddAsync(shortUrl);
-            await _cache.SetAsync<ShortUrl>(shortUrl.UrlKey, shortUrl);
-        }
-
-        public async Task<ShortUrl> ResolveAsync(string shortUrlKey)
-        {
-            if (String.IsNullOrEmpty(shortUrlKey))
-                throw new ArgumentNullException(nameof(shortUrlKey));
-
-            var shortUrl = _context.ShortUrls.FirstOrDefault(p => p.UrlKey.Equals(shortUrlKey));
-
-            if (shortUrl == null || String.IsNullOrEmpty(shortUrl.OriginalUrl))
-                throw new ArgumentNullException(nameof(shortUrlKey));
-
-            shortUrl.LastRedirect = DateTime.UtcNow;
-            shortUrl.RedirectsCount += 1;
-
-            await SaveChangesAsync();
-
-            return shortUrl;
         }
 
         public IEnumerable<ShortUrl> Get(int page, int pageCapacity)
@@ -59,6 +45,12 @@ namespace UrlShortenerService.Data
         public void Delete(DateTime dateTime)
         {
             _context.ShortUrls.RemoveRange(_context.ShortUrls.Where(x => x.CreatedOn >= dateTime));
+        }
+
+        public void RegisterRedirect(ShortUrl shortUrl)
+        {
+            shortUrl.LastRedirect = DateTime.UtcNow;
+            shortUrl.RedirectsCount += 1;
         }
 
         public async Task<bool> SaveChangesAsync()

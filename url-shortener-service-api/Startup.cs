@@ -51,6 +51,7 @@ namespace UrlShortenerService
             services.AddSingleton<IStackCacheService<ShortUrlKey>, StackCacheService<ShortUrlKey>>();
             services.AddScoped<IUrlUtil, UrlUtil>();
             services.AddScoped<ICacheService, CacheService>();
+            services.AddScoped<IShortUrlKeyService, ShortUrlKeyService>();
 
             services.AddControllers();
 

@@ -9,12 +9,12 @@ namespace UrlShortenerService.Data
     {
         Task<bool> SaveChangesAsync();
 
-        Task<IEnumerable<ShortUrlKey>> GetAsync(int keysAmount);
-
-        Task<ShortUrlKey> GetAsync();
-
-        Task GenerateAsync(int shortUrlKeysAmount);
+        Task AddRangeAsync(IEnumerable<ShortUrlKey> shortUrlKeys);
 
         void Delete(DateTime dateTime);
+
+        int Count(bool isUsed = false);
+
+        IEnumerable<ShortUrlKey> Get(int keysAmount, bool isUsed = false);
     }
 }

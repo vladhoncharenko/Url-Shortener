@@ -11,10 +11,12 @@ namespace UrlShortenerService.Data
 
         IEnumerable<ShortUrl> Get(int page, int pageCapacity);
 
-        Task<ShortUrl> ResolveAsync(string shortUrlKey);
+        ShortUrl Get(string shortUrlKey);
 
         Task AddAsync(ShortUrl shortUrl);
 
         void Delete(DateTime dateTime);
+
+        void RegisterRedirect(ShortUrl shortUrl);
     }
 }

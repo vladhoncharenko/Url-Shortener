@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using UrlShortenerService.Data;
+using UrlShortenerService.Services;
 
 namespace UrlShortenerService.Controllers
 {
@@ -15,13 +16,15 @@ namespace UrlShortenerService.Controllers
         private readonly IShortUrlKeyRepo _shortUrlKeyRepo;
         private readonly ILogger<UrlShortenerController> _logger;
         private readonly IConfiguration _configuration;
+        private readonly IShortUrlKeyService _shortUrlKeyService;
 
-        public ShortUrlKeysController(ILogger<UrlShortenerController> logger, IShortUrlRepo shortUrlRepo, IShortUrlKeyRepo shortUrlKeyRepo, IConfiguration configuration)
+        public ShortUrlKeysController(ILogger<UrlShortenerController> logger, IShortUrlRepo shortUrlRepo, IShortUrlKeyRepo shortUrlKeyRepo, IConfiguration configuration, IShortUrlKeyService shortUrlKeyService)
         {
             _logger = logger;
             _shortUrlRepo = shortUrlRepo;
             _shortUrlKeyRepo = shortUrlKeyRepo;
             _configuration = configuration;
+            _shortUrlKeyService = shortUrlKeyService;
         }
 
         [HttpPost]
@@ -41,7 +44,7 @@ namespace UrlShortenerService.Controllers
         [HttpPost]
         public async Task<ActionResult> GenerateNewShortUrlKeys()
         {
-            await _shortUrlKeyRepo.GenerateAsync(_configuration.GetValue<int>("EnvVars:AmountOfKeysAutomaticallyGenerated"));
+            await _shortUrlKeyService.GenerateAsync(_configuration.GetValue<int>("EnvVars:AmountOfKeysAutomaticallyGenerated"));
             _logger.LogInformation("New URL keys auto generation was run successfully");
 
             return Ok();

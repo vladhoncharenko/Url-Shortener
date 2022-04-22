@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using UrlShortenerService.Data;
 using UrlShortenerService.DTOs;
 using UrlShortenerService.Models;
+using UrlShortenerService.Services;
 
 namespace UrlShortenerService.Controllers
 {
@@ -19,12 +20,16 @@ namespace UrlShortenerService.Controllers
         private readonly IShortUrlKeyRepo _shortUrlKeyRepo;
         private readonly ILogger<UrlShortenerController> _logger;
 
-        public UrlShortenerController(ILogger<UrlShortenerController> logger, IShortUrlRepo shortUrlRepo, IShortUrlKeyRepo shortUrlKeyRepo, IMapper mapper)
+        private readonly IShortUrlKeyService _shortUrlKeyService;
+
+
+        public UrlShortenerController(ILogger<UrlShortenerController> logger, IShortUrlRepo shortUrlRepo, IShortUrlKeyRepo shortUrlKeyRepo, IMapper mapper, IShortUrlKeyService shortUrlKeyService)
         {
             _logger = logger;
             _mapper = mapper;
             _shortUrlRepo = shortUrlRepo;
             _shortUrlKeyRepo = shortUrlKeyRepo;
+            _shortUrlKeyService = shortUrlKeyService;
         }
 
         [HttpPut(Name = "CreateAShortUrl")]
@@ -33,7 +38,7 @@ namespace UrlShortenerService.Controllers
             if (!ModelState.IsValid)
                 return BadRequest("Please pass a valid URL.");
 
-            var shortUrlKey = await _shortUrlKeyRepo.GetAsync();
+            var shortUrlKey = await _shortUrlKeyService.GetAsync();
             var createdShortUrl = new ShortUrl()
             {
                 UrlKey = shortUrlKey.UrlKey,
@@ -55,7 +60,12 @@ namespace UrlShortenerService.Controllers
             if (string.IsNullOrEmpty(shortUrlKey) || shortUrlKey.Length > 6)
                 return BadRequest("Url Key should be six characters alphanumeric string.");
 
-            var shortUrl = await _shortUrlRepo.ResolveAsync(shortUrlKey);
+            var shortUrl = _shortUrlRepo.Get(shortUrlKey);
+            if (shortUrl == null || String.IsNullOrEmpty(shortUrl.OriginalUrl))
+                throw new ArgumentNullException(nameof(shortUrlKey));
+
+            _shortUrlRepo.RegisterRedirect(shortUrl);
+            await _shortUrlRepo.SaveChangesAsync();
 
             return RedirectPermanent(shortUrl.OriginalUrl);
         }
