@@ -8,7 +8,6 @@ namespace UrlShortenerService.Cache
 
         public StackCacheService()
         {
-
         }
 
         public T Get()

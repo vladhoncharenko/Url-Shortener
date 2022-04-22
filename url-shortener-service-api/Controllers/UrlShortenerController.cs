@@ -38,8 +38,13 @@ namespace UrlShortenerService.Controllers
             _cacheService = cacheService;
         }
 
+        /// <summary>
+        /// Creates new shorten for provided URL
+        /// </summary>
+        /// <param name="shortUrlCreateDTO">Object with an original url to shorten</param>
+        /// <returns>Returns created Short URL object</returns>
         [HttpPut(Name = "CreateAShortUrl")]
-        public async Task<ActionResult<string>> Put(ShortUrlCreateDTO shortUrlCreateDTO)
+        public async Task<ActionResult<ShortUrlReadDTO>> Put(ShortUrlCreateDTO shortUrlCreateDTO)
         {
             if (!ModelState.IsValid || shortUrlCreateDTO.OriginalUrl.Contains(" "))
                 return BadRequest("Please pass a valid URL.");
@@ -61,6 +66,11 @@ namespace UrlShortenerService.Controllers
             return Created(nameof(Get), shortUrlOutput);
         }
 
+        /// <summary>
+        /// Redirects request to an original (shortened) URL
+        /// </summary>
+        /// <param name="shortUrlKey">Key to match the original URL</param>
+        /// <returns>Redirects to the original URL</returns>
         [HttpGet("/{shortUrlKey}", Name = "RedirectToTheOriginalUrl")]
         public async Task<ActionResult> Get(string shortUrlKey)
         {
@@ -83,6 +93,12 @@ namespace UrlShortenerService.Controllers
             return RedirectPermanent(shortUrl.OriginalUrl);
         }
 
+        /// <summary>
+        /// Returns shortened URLs by portions
+        /// </summary>
+        /// <param name="page">Page number</param>
+        /// <param name="pageCapacity">Amount of items per page</param>
+        /// <returns>Collection of shortened URLs</returns>
         [HttpGet("{page}/{pageCapacity}", Name = "GetShortenedUrls")]
         public ActionResult<IEnumerable<ShortUrlReadDTO>> GetShortenedUrls(int page, int pageCapacity = 10)
         {

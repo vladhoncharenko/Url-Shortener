@@ -9,7 +9,7 @@ using UrlShortenerService.Services;
 namespace UrlShortenerService.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     public class ShortUrlKeysController : ControllerBase
     {
         private readonly IShortUrlRepo _shortUrlRepo;
@@ -27,6 +27,10 @@ namespace UrlShortenerService.Controllers
             _shortUrlKeyService = shortUrlKeyService;
         }
 
+        /// <summary>
+        /// Triggers the data retention engine that deletes old keys and shortened URLs
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> TriggerDataRetentionEngine()
         {
@@ -41,6 +45,10 @@ namespace UrlShortenerService.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Triggers new keys generation mechanism
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> GenerateNewShortUrlKeys()
         {
