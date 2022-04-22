@@ -26,7 +26,6 @@ namespace UrlShortenerService.Data
             if (keysAmount <= 0)
                 throw new ArgumentOutOfRangeException(nameof(keysAmount));
 
-            await _context.Database.EnsureCreatedAsync();
 
             if (_context.ShortUrlKeys.Where(k => !k.IsUsed).Count() <= 50)
             {

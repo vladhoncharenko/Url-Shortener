@@ -83,6 +83,8 @@ namespace UrlShortenerService
             {
                 endpoints.MapControllers();
             });
+
+            dbContext.Database.EnsureCreated();
         }
     }
 }
