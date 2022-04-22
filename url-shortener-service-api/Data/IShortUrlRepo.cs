@@ -17,6 +17,6 @@ namespace UrlShortenerService.Data
 
         void Delete(DateTime dateTime);
 
-        void RegisterRedirect(ShortUrl shortUrl);
+        ShortUrl RegisterRedirect(string shortUrlKey);
     }
 }

@@ -47,10 +47,13 @@ namespace UrlShortenerService.Data
             _context.ShortUrls.RemoveRange(_context.ShortUrls.Where(x => x.CreatedOn >= dateTime));
         }
 
-        public void RegisterRedirect(ShortUrl shortUrl)
+        public ShortUrl RegisterRedirect(string shortUrlKey)
         {
+            var shortUrl = Get(shortUrlKey);
             shortUrl.LastRedirect = DateTime.UtcNow;
             shortUrl.RedirectsCount += 1;
+
+            return shortUrl;
         }
 
         public async Task<bool> SaveChangesAsync()

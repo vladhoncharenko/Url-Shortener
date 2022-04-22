@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using UrlShortenerService.Cache;
 using UrlShortenerService.Data;
 using UrlShortenerService.DTOs;
+using UrlShortenerService.Messaging;
 using UrlShortenerService.Models;
 using UrlShortenerService.Services;
 
@@ -17,19 +19,23 @@ namespace UrlShortenerService.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IShortUrlRepo _shortUrlRepo;
+        private readonly ICacheService _cacheService;
         private readonly IShortUrlKeyRepo _shortUrlKeyRepo;
-        private readonly ILogger<UrlShortenerController> _logger;
-
         private readonly IShortUrlKeyService _shortUrlKeyService;
+        private readonly ILogger<UrlShortenerController> _logger;
+        private readonly IMessagesSender<UrlRedirectMessage> _messagesSender;
 
-
-        public UrlShortenerController(ILogger<UrlShortenerController> logger, IShortUrlRepo shortUrlRepo, IShortUrlKeyRepo shortUrlKeyRepo, IMapper mapper, IShortUrlKeyService shortUrlKeyService)
+        public UrlShortenerController(ILogger<UrlShortenerController> logger, IShortUrlRepo shortUrlRepo,
+            IShortUrlKeyRepo shortUrlKeyRepo, IMapper mapper, IShortUrlKeyService shortUrlKeyService,
+            IMessagesSender<UrlRedirectMessage> messagesSender, ICacheService cacheService)
         {
             _logger = logger;
             _mapper = mapper;
             _shortUrlRepo = shortUrlRepo;
             _shortUrlKeyRepo = shortUrlKeyRepo;
             _shortUrlKeyService = shortUrlKeyService;
+            _messagesSender = messagesSender;
+            _cacheService = cacheService;
         }
 
         [HttpPut(Name = "CreateAShortUrl")]
@@ -48,6 +54,7 @@ namespace UrlShortenerService.Controllers
 
             await _shortUrlRepo.AddAsync(createdShortUrl);
             await _shortUrlRepo.SaveChangesAsync();
+            await _cacheService.SetAsync<ShortUrl>(createdShortUrl.UrlKey, createdShortUrl);
 
             var shortUrlOutput = _mapper.Map<ShortUrlReadDTO>(createdShortUrl);
 
@@ -60,12 +67,18 @@ namespace UrlShortenerService.Controllers
             if (string.IsNullOrEmpty(shortUrlKey) || shortUrlKey.Length > 6)
                 return BadRequest("Url Key should be six characters alphanumeric string.");
 
-            var shortUrl = _shortUrlRepo.Get(shortUrlKey);
+            var shortUrl = await _cacheService.GetAsync<ShortUrl>(shortUrlKey);
+            if (shortUrl == null)
+            {
+                shortUrl = _shortUrlRepo.Get(shortUrlKey);
+                if (shortUrl != null)
+                    await _cacheService.SetAsync<ShortUrl>(shortUrl.UrlKey, shortUrl);
+            }
+
             if (shortUrl == null || String.IsNullOrEmpty(shortUrl.OriginalUrl))
                 throw new ArgumentNullException(nameof(shortUrlKey));
 
-            _shortUrlRepo.RegisterRedirect(shortUrl);
-            await _shortUrlRepo.SaveChangesAsync();
+            await _messagesSender.SendMessageAsync(new UrlRedirectMessage(shortUrl.UrlKey));
 
             return RedirectPermanent(shortUrl.OriginalUrl);
         }

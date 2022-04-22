@@ -1,4 +1,5 @@
 using System;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using UrlShortenerService.Cache;
 using UrlShortenerService.Data;
+using UrlShortenerService.Messaging;
 using UrlShortenerService.Models;
 using UrlShortenerService.Services;
 using UrlShortenerService.Utils;
@@ -40,6 +42,22 @@ namespace UrlShortenerService
                               );
             }
 
+            services.AddMassTransit(x =>
+            {
+                x.AddConsumer<MessagesConsumer>();
+                x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
+                {
+                    cfg.Host(new Uri(Configuration.GetValue<string>("Messaging:Uri")));
+                    EndpointConvention.Map<UrlRedirectMessage>(new Uri("queue:"+Configuration.GetValue<string>("Messaging:RceiveEndpoint")));
+
+                    cfg.ReceiveEndpoint(Configuration.GetValue<string>("Messaging:RceiveEndpoint"), ep =>
+                    {
+                        ep.PrefetchCount = Configuration.GetValue<int>("Messaging:PrefetchCount");
+                        ep.ConfigureConsumer<MessagesConsumer>(provider);
+                    });
+                }));
+            });
+
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = $"{Configuration.GetValue<string>("Redis:Server")}:{Configuration.GetValue<int>("Redis:Port")}";
@@ -49,11 +67,13 @@ namespace UrlShortenerService
             services.AddScoped<IShortUrlRepo, ShortUrlRepo>();
             services.AddScoped<IUrlKeyGenerationService, UrlKeyGenerationService>();
             services.AddSingleton<IStackCacheService<ShortUrlKey>, StackCacheService<ShortUrlKey>>();
+            services.AddSingleton<IMessagesSender<UrlRedirectMessage>, MessagesSender<UrlRedirectMessage>>();
             services.AddScoped<IUrlUtil, UrlUtil>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<IShortUrlKeyService, ShortUrlKeyService>();
 
             services.AddControllers();
+            services.AddMassTransitHostedService();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
