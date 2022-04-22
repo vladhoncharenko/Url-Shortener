@@ -29,7 +29,6 @@ namespace UrlShortenerService.Data
             if (keysAmount <= 0)
                 throw new ArgumentOutOfRangeException(nameof(keysAmount));
 
-
             if (_context.ShortUrlKeys.Where(k => !k.IsUsed).Count() <= _configuration.GetValue<int>("EnvVars:AmountOfKeysThreshold"))
             {
                 await GenerateAsync(_configuration.GetValue<int>("EnvVars:AmountOfKeysRuntimeGenerated"));
@@ -63,9 +62,9 @@ namespace UrlShortenerService.Data
             return shortUrlKey;
         }
 
-        public Task DeleteAsync(DateTime dateTime)
+        public void Delete(DateTime dateTime)
         {
-            throw new NotImplementedException();
+            _context.ShortUrlKeys.RemoveRange(_context.ShortUrlKeys.Where(x => x.IssuedOn >= dateTime));
         }
 
         public async Task<bool> SaveChangesAsync()

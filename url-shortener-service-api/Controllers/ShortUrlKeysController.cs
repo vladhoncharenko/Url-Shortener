@@ -27,7 +27,12 @@ namespace UrlShortenerService.Controllers
         [HttpPost]
         public async Task<ActionResult> TriggerDataRetentionEngine()
         {
-            await _shortUrlKeyRepo.DeleteAsync(DateTime.Today.AddMonths(-_configuration.GetValue<int>("EnvVars:UrlsDataRetentionPeriodInMonths")));
+            _shortUrlKeyRepo.Delete(DateTime.Today.AddMonths(-_configuration.GetValue<int>("EnvVars:UrlsDataRetentionPeriodInMonths")));
+            _shortUrlRepo.Delete(DateTime.Today.AddMonths(-_configuration.GetValue<int>("EnvVars:UrlsDataRetentionPeriodInMonths")));
+
+            await _shortUrlKeyRepo.SaveChangesAsync();
+            await _shortUrlRepo.SaveChangesAsync();
+
             _logger.LogInformation("Data purging was run successfully");
 
             return Ok();

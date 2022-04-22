@@ -15,6 +15,6 @@ namespace UrlShortenerService.Data
 
         Task GenerateAsync(int shortUrlKeysAmount);
 
-        Task DeleteAsync(DateTime dateTime);
+        void Delete(DateTime dateTime);
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UrlShortenerService.Models;
@@ -8,10 +9,12 @@ namespace UrlShortenerService.Data
     {
         Task<bool> SaveChangesAsync();
 
-        IEnumerable<ShortUrl> GetShortUrls(int page, int pageCapacity);
+        IEnumerable<ShortUrl> Get(int page, int pageCapacity);
 
-        Task<ShortUrl> ResolveShortUrlAsync(string shortUrlKey);
+        Task<ShortUrl> ResolveAsync(string shortUrlKey);
 
-        Task AddShortUrlAsync(ShortUrl shortUrl);
+        Task AddAsync(ShortUrl shortUrl);
+
+        void Delete(DateTime dateTime);
     }
 }

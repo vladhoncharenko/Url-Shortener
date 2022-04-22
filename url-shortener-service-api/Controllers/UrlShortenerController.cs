@@ -41,7 +41,7 @@ namespace UrlShortenerService.Controllers
                 CreatedOn = DateTime.UtcNow
             };
 
-            await _shortUrlRepo.AddShortUrlAsync(createdShortUrl);
+            await _shortUrlRepo.AddAsync(createdShortUrl);
             await _shortUrlRepo.SaveChangesAsync();
 
             var shortUrlOutput = _mapper.Map<ShortUrlReadDTO>(createdShortUrl);
@@ -55,7 +55,7 @@ namespace UrlShortenerService.Controllers
             if (string.IsNullOrEmpty(shortUrlKey) || shortUrlKey.Length > 6)
                 return BadRequest("Url Key should be six characters alphanumeric string.");
 
-            var shortUrl = await _shortUrlRepo.ResolveShortUrlAsync(shortUrlKey);
+            var shortUrl = await _shortUrlRepo.ResolveAsync(shortUrlKey);
 
             return RedirectPermanent(shortUrl.OriginalUrl);
         }
@@ -66,7 +66,7 @@ namespace UrlShortenerService.Controllers
             if (page <= 0 || pageCapacity <= 0)
                 return BadRequest("Page Number and Page Capacity should be greater than zero.");
 
-            var shortUrls = _shortUrlRepo.GetShortUrls(page, pageCapacity);
+            var shortUrls = _shortUrlRepo.Get(page, pageCapacity);
 
             return Ok(_mapper.Map<IEnumerable<ShortUrlReadDTO>>(shortUrls));
         }

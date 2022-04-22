@@ -18,7 +18,7 @@ namespace UrlShortenerService.Data
             _cache = cache;
         }
 
-        public async Task AddShortUrlAsync(ShortUrl shortUrl)
+        public async Task AddAsync(ShortUrl shortUrl)
         {
             if (shortUrl == null)
                 throw new ArgumentNullException(nameof(shortUrl));
@@ -27,7 +27,7 @@ namespace UrlShortenerService.Data
             await _cache.SetAsync<ShortUrl>(shortUrl.UrlKey, shortUrl);
         }
 
-        public async Task<ShortUrl> ResolveShortUrlAsync(string shortUrlKey)
+        public async Task<ShortUrl> ResolveAsync(string shortUrlKey)
         {
             if (String.IsNullOrEmpty(shortUrlKey))
                 throw new ArgumentNullException(nameof(shortUrlKey));
@@ -45,7 +45,7 @@ namespace UrlShortenerService.Data
             return shortUrl;
         }
 
-        public IEnumerable<ShortUrl> GetShortUrls(int page, int pageCapacity)
+        public IEnumerable<ShortUrl> Get(int page, int pageCapacity)
         {
             if (page <= 0)
                 throw new ArgumentOutOfRangeException(nameof(page));
@@ -54,6 +54,11 @@ namespace UrlShortenerService.Data
                 throw new ArgumentOutOfRangeException(nameof(pageCapacity));
 
             return _context.ShortUrls.Skip((page - 1) * pageCapacity).Take(pageCapacity);
+        }
+
+        public void Delete(DateTime dateTime)
+        {
+            _context.ShortUrls.RemoveRange(_context.ShortUrls.Where(x => x.CreatedOn >= dateTime));
         }
 
         public async Task<bool> SaveChangesAsync()
