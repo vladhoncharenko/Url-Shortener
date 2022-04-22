@@ -2,6 +2,6 @@ namespace UrlShortenerService.Utils
 {
     public interface IUrlUtil
     {
-        string GetShortLinkKeyFromUrl(string shortLinkKeyWithUrl);
+        string GetShortUrlKeyFromUrl(string shortUrlKeyWithUrl);
     }
 }

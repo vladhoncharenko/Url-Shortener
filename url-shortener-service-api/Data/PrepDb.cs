@@ -18,29 +18,29 @@ namespace UrlShortenerService.Data
 
         private static void SeedData(AppDbContext context)
         {
-            if (!context.ShortLinks.Any())
+            if (!context.ShortUrls.Any())
             {
-                Console.WriteLine("Seeding Short Links Data");
-                context.ShortLinks.AddRange(
-                    new ShortLink()
+                Console.WriteLine("Seeding Short Urls Data");
+                context.ShortUrls.AddRange(
+                    new ShortUrl()
                     {
-                        LinkKey = "4r5t6y",
+                        UrlKey = "4r5t6y",
                         OriginalUrl = "http://google.com",
                         RedirectsCount = 3,
                         CreatedOn = new DateTime(2022, 1, 11),
                         LastRedirect = new DateTime(2022, 2, 11),
                     },
-                    new ShortLink()
+                    new ShortUrl()
                     {
-                        LinkKey = "r5t6yg",
+                        UrlKey = "r5t6yg",
                         OriginalUrl = "http://fb.com",
                         RedirectsCount = 0,
                         CreatedOn = new DateTime(2022, 1, 12),
                         LastRedirect = new DateTime(2022, 2, 12),
                     },
-                    new ShortLink()
+                    new ShortUrl()
                     {
-                        LinkKey = "dfgvb6",
+                        UrlKey = "dfgvb6",
                         OriginalUrl = "http://n-ix.com",
                         RedirectsCount = 5,
                         CreatedOn = new DateTime(2022, 1, 13),
@@ -52,24 +52,24 @@ namespace UrlShortenerService.Data
             }
             else
             {
-                Console.WriteLine("We already have Short Links data");
+                Console.WriteLine("We already have Short Urls data");
             }
 
-            if (!context.ShortLinkKeys.Any())
+            if (!context.ShortUrlKeys.Any())
             {
-                Console.WriteLine("Seeding Short Link Keys Data");
-                context.ShortLinkKeys.AddRange(
-                    new ShortLinkKey()
+                Console.WriteLine("Seeding Short Url Keys Data");
+                context.ShortUrlKeys.AddRange(
+                    new ShortUrlKey()
                     {
-                        LinkKey = "9j4ed5"
+                        UrlKey = "9j4ed5"
                     },
-                    new ShortLinkKey()
+                    new ShortUrlKey()
                     {
-                        LinkKey = "e4f5t6"
+                        UrlKey = "e4f5t6"
                     },
-                    new ShortLinkKey()
+                    new ShortUrlKey()
                     {
-                        LinkKey = "3e45t6"
+                        UrlKey = "3e45t6"
                     }
                 );
 
@@ -77,7 +77,7 @@ namespace UrlShortenerService.Data
             }
             else
             {
-                Console.WriteLine("We already have Short Link Keys data");
+                Console.WriteLine("We already have Short Url Keys data");
             }
         }
     }

@@ -4,12 +4,12 @@ namespace UrlShortenerService.Utils
 {
     public class UrlUtil : IUrlUtil
     {
-        public string GetShortLinkKeyFromUrl(string shortLinkKeyWithUrl)
+        public string GetShortUrlKeyFromUrl(string shortUrlKeyWithUrl)
         {
-            if (string.IsNullOrEmpty(shortLinkKeyWithUrl))
-                throw new ArgumentException(nameof(shortLinkKeyWithUrl));
+            if (string.IsNullOrEmpty(shortUrlKeyWithUrl))
+                throw new ArgumentException(nameof(shortUrlKeyWithUrl));
 
-            return shortLinkKeyWithUrl.Substring(shortLinkKeyWithUrl.LastIndexOf('/') + 1);
+            return shortUrlKeyWithUrl.Substring(shortUrlKeyWithUrl.LastIndexOf('/') + 1);
         }
     }
 }

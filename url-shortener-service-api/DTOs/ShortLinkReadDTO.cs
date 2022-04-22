@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace UrlShortenerService.DTOs
 {
-    public class ShortLinkReadDTO
+    public class ShortUrlReadDTO
     {
         [Required]
         [StringLength(300)]

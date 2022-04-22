@@ -9,8 +9,8 @@ namespace UrlShortenerService.Data
         {
         }
 
-        public DbSet<ShortLink> ShortLinks { get; set; }
-        
-        public DbSet<ShortLinkKey> ShortLinkKeys { get; set; }
+        public DbSet<ShortUrl> ShortUrls { get; set; }
+
+        public DbSet<ShortUrlKey> ShortUrlKeys { get; set; }
     }
 }

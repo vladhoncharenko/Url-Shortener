@@ -45,11 +45,10 @@ namespace UrlShortenerService
                 options.Configuration = $"{Configuration.GetValue<string>("Redis:Server")}:{Configuration.GetValue<int>("Redis:Port")}";
             });
 
-            services.AddScoped<IShortLinkKeyRepo, ShortLinkKeyRepo>();
-            services.AddScoped<IShortLinkRepo, ShortLinkRepo>();
-            services.AddScoped<IShortLinkKeyGenerationService, ShortLinkKeyGenerationService>();
-            services.AddSingleton<IStackCacheService<ShortLinkKey>, StackCacheService<ShortLinkKey>>();
-            services.AddScoped<IShortLinkService, ShortLinkService>();
+            services.AddScoped<IShortUrlKeyRepo, ShortUrlKeyRepo>();
+            services.AddScoped<IShortUrlRepo, ShortUrlRepo>();
+            services.AddScoped<IUrlKeyGenerationService, UrlKeyGenerationService>();
+            services.AddSingleton<IStackCacheService<ShortUrlKey>, StackCacheService<ShortUrlKey>>();
             services.AddScoped<IUrlUtil, UrlUtil>();
             services.AddScoped<ICacheService, CacheService>();
 

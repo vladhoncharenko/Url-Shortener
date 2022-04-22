@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace UrlShortenerService.Models
 {
-    public class ShortLink
+    public class ShortUrl
     {
         [Key]
         [Required]
-        public string LinkKey { get; set; }
+        public string UrlKey { get; set; }
 
         [Required]
         public string OriginalUrl { get; set; }
