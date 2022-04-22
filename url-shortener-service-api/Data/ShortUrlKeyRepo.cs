@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using UrlShortenerService.Cache;
 using UrlShortenerService.Models;
 using UrlShortenerService.Services;
@@ -13,12 +14,14 @@ namespace UrlShortenerService.Data
         private readonly AppDbContext _context;
         private readonly IStackCacheService<ShortUrlKey> _stackCacheService;
         private readonly IUrlKeyGenerationService _shortUrlKeyGenerationService;
+        private readonly IConfiguration _configuration;
 
-        public ShortUrlKeyRepo(AppDbContext context, IUrlKeyGenerationService shortUrlKeyGenerationService, IStackCacheService<ShortUrlKey> stackCacheService)
+        public ShortUrlKeyRepo(AppDbContext context, IUrlKeyGenerationService shortUrlKeyGenerationService, IStackCacheService<ShortUrlKey> stackCacheService, IConfiguration configuration)
         {
             _context = context;
             _shortUrlKeyGenerationService = shortUrlKeyGenerationService;
             _stackCacheService = stackCacheService;
+            _configuration = configuration;
         }
 
         public async Task<IEnumerable<ShortUrlKey>> GetAsync(int keysAmount)
@@ -27,9 +30,9 @@ namespace UrlShortenerService.Data
                 throw new ArgumentOutOfRangeException(nameof(keysAmount));
 
 
-            if (_context.ShortUrlKeys.Where(k => !k.IsUsed).Count() <= 50)
+            if (_context.ShortUrlKeys.Where(k => !k.IsUsed).Count() <= _configuration.GetValue<int>("EnvVars:AmountOfKeysThreshold"))
             {
-                await GenerateAsync(50);
+                await GenerateAsync(_configuration.GetValue<int>("EnvVars:AmountOfKeysRuntimeGenerated"));
             }
 
             var shortUrlKeys = _context.ShortUrlKeys.Where(k => !k.IsUsed).Take(keysAmount);
@@ -53,7 +56,7 @@ namespace UrlShortenerService.Data
             var shortUrlKey = _stackCacheService.Get();
             if (shortUrlKey == null)
             {
-                _stackCacheService.Add(await GetAsync(50));
+                _stackCacheService.Add(await GetAsync(_configuration.GetValue<int>("EnvVars:AmountOfKeysInMemoryCache")));
                 shortUrlKey = _stackCacheService.Get();
             }
 

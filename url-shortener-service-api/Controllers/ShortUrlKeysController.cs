@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using UrlShortenerService.Data;
 
@@ -13,18 +14,20 @@ namespace UrlShortenerService.Controllers
         private readonly IShortUrlRepo _shortUrlRepo;
         private readonly IShortUrlKeyRepo _shortUrlKeyRepo;
         private readonly ILogger<UrlShortenerController> _logger;
+        private readonly IConfiguration _configuration;
 
-        public ShortUrlKeysController(ILogger<UrlShortenerController> logger, IShortUrlRepo shortUrlRepo, IShortUrlKeyRepo shortUrlKeyRepo)
+        public ShortUrlKeysController(ILogger<UrlShortenerController> logger, IShortUrlRepo shortUrlRepo, IShortUrlKeyRepo shortUrlKeyRepo, IConfiguration configuration)
         {
             _logger = logger;
             _shortUrlRepo = shortUrlRepo;
             _shortUrlKeyRepo = shortUrlKeyRepo;
+            _configuration = configuration;
         }
 
         [HttpPost]
         public async Task<ActionResult> TriggerDataRetentionEngine()
         {
-            await _shortUrlKeyRepo.DeleteAsync(DateTime.Today.AddMonths(-1));
+            await _shortUrlKeyRepo.DeleteAsync(DateTime.Today.AddMonths(-_configuration.GetValue<int>("EnvVars:UrlsDataRetentionPeriodInMonths")));
             _logger.LogInformation("Data purging was run successfully");
 
             return Ok();
@@ -33,7 +36,7 @@ namespace UrlShortenerService.Controllers
         [HttpPost]
         public async Task<ActionResult> GenerateNewShortUrlKeys()
         {
-            await _shortUrlKeyRepo.GenerateAsync(100);
+            await _shortUrlKeyRepo.GenerateAsync(_configuration.GetValue<int>("EnvVars:AmountOfKeysAutomaticallyGenerated"));
             _logger.LogInformation("New URL keys auto generation was run successfully");
 
             return Ok();
