@@ -20,11 +20,5 @@ namespace UrlShortenerService.Models
 
         [Required]
         public DateTime LastRedirect { get; set; }
-
-        public void RegisterRedirect()
-        {
-            LastRedirect = DateTime.UtcNow;
-            RedirectsCount += 1;
-        }
     }
 }
