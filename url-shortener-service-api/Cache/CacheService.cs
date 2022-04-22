@@ -3,13 +3,13 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 
-namespace UrlShortenerService.Services
+namespace UrlShortenerService.Cache
 {
-    public class RedisCacheService : IRedisCacheService
+    public class CacheService : ICacheService
     {
         private readonly IDistributedCache _cache;
 
-        public RedisCacheService(IDistributedCache cache)
+        public CacheService(IDistributedCache cache)
         {
             _cache = cache;
         }

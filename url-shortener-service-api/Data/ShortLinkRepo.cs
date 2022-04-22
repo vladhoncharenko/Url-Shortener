@@ -10,12 +10,12 @@ namespace UrlShortenerService.Data
     public class ShortLinkRepo : IShortLinkRepo
     {
         private readonly AppDbContext _context;
-        private readonly IShortLinkCache _shortLinkCache;
+        private readonly ICacheService _cache;
 
-        public ShortLinkRepo(AppDbContext context, IShortLinkCache shortLinkCache)
+        public ShortLinkRepo(AppDbContext context, ICacheService cache)
         {
             _context = context;
-            _shortLinkCache = shortLinkCache;
+            _cache = cache;
         }
 
         public async Task AddShortLinkAsync(ShortLink shortLink)
@@ -24,7 +24,7 @@ namespace UrlShortenerService.Data
                 throw new ArgumentNullException(nameof(shortLink));
 
             await _context.ShortLinks.AddAsync(shortLink);
-            await _shortLinkCache.AddAsync(shortLink);
+            await _cache.SetAsync<ShortLink>(shortLink.LinkKey, shortLink);
         }
 
         public async Task<ShortLink> ResolveShortLinkAsync(string shortLinkKey)

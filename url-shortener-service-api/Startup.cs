@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using UrlShortenerService.Cache;
 using UrlShortenerService.Data;
+using UrlShortenerService.Models;
 using UrlShortenerService.Services;
 using UrlShortenerService.Utils;
 
@@ -47,11 +48,10 @@ namespace UrlShortenerService
             services.AddScoped<IShortLinkKeyRepo, ShortLinkKeyRepo>();
             services.AddScoped<IShortLinkRepo, ShortLinkRepo>();
             services.AddScoped<IShortLinkKeyGenerationService, ShortLinkKeyGenerationService>();
-            services.AddScoped<IShortLinkCache, ShortLinkCache>();
-            services.AddScoped<IShortLinkKeyCache, ShortLinkKeyCache>();
+            services.AddSingleton<IStackCacheService<ShortLinkKey>, StackCacheService<ShortLinkKey>>();
             services.AddScoped<IShortLinkService, ShortLinkService>();
             services.AddScoped<IUrlUtil, UrlUtil>();
-            services.AddScoped<IRedisCacheService, RedisCacheService>();
+            services.AddScoped<ICacheService, CacheService>();
 
             services.AddControllers();
 

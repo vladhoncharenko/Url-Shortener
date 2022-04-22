@@ -11,14 +11,14 @@ namespace UrlShortenerService.Data
     public class ShortLinkKeyRepo : IShortLinkKeyRepo
     {
         private readonly AppDbContext _context;
-        private readonly IShortLinkKeyCache _shortLinkKeyCache;
+        private readonly IStackCacheService<ShortLinkKey> _stackCacheService;
         private readonly IShortLinkKeyGenerationService _shortLinkKeyGenerationService;
 
-        public ShortLinkKeyRepo(AppDbContext context, IShortLinkKeyGenerationService shortLinkKeyGenerationService, IShortLinkKeyCache shortLinkKeyCache)
+        public ShortLinkKeyRepo(AppDbContext context, IShortLinkKeyGenerationService shortLinkKeyGenerationService, IStackCacheService<ShortLinkKey> stackCacheService)
         {
             _context = context;
             _shortLinkKeyGenerationService = shortLinkKeyGenerationService;
-            _shortLinkKeyCache = shortLinkKeyCache;
+            _stackCacheService = stackCacheService;
         }
 
         public async Task<IEnumerable<ShortLinkKey>> GetShortLinkKeysAsync(int keysAmount)
@@ -51,11 +51,11 @@ namespace UrlShortenerService.Data
 
         public async Task<ShortLinkKey> GetShortLinkKeyAsync()
         {
-            var shortLinkKey = _shortLinkKeyCache.Get();
+            var shortLinkKey = _stackCacheService.Get();
             if (shortLinkKey == null)
             {
-                _shortLinkKeyCache.Add(await GetShortLinkKeysAsync(50));
-                shortLinkKey = _shortLinkKeyCache.Get();
+                _stackCacheService.Add(await GetShortLinkKeysAsync(50));
+                shortLinkKey = _stackCacheService.Get();
             }
 
             return shortLinkKey;

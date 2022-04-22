@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 
-namespace UrlShortenerService.Services
+namespace UrlShortenerService.Cache
 {
-    public interface IRedisCacheService
+    public interface ICacheService
     {
         Task<T> GetAsync<T>(string key);
         Task<T> SetAsync<T>(string key, T value);
