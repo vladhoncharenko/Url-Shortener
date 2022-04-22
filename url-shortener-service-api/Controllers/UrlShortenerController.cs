@@ -41,7 +41,7 @@ namespace UrlShortenerService.Controllers
         [HttpPut(Name = "CreateAShortUrl")]
         public async Task<ActionResult<string>> Put(ShortUrlCreateDTO shortUrlCreateDTO)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || shortUrlCreateDTO.OriginalUrl.Contains(" "))
                 return BadRequest("Please pass a valid URL.");
 
             var shortUrlKey = await _shortUrlKeyService.GetAsync();
@@ -75,8 +75,8 @@ namespace UrlShortenerService.Controllers
                     await _cacheService.SetAsync<ShortUrl>(shortUrl.UrlKey, shortUrl);
             }
 
-            if (shortUrl == null || String.IsNullOrEmpty(shortUrl.OriginalUrl))
-                throw new ArgumentNullException(nameof(shortUrlKey));
+            if (shortUrl == null || String.IsNullOrEmpty(shortUrl?.OriginalUrl))
+                return BadRequest("Please pass a valid URL key.");
 
             await _messagesSender.SendMessageAsync(new UrlRedirectMessage(shortUrl.UrlKey));
 
