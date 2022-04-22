@@ -12,7 +12,6 @@ using UrlShortenerService.Data;
 using UrlShortenerService.Messaging;
 using UrlShortenerService.Models;
 using UrlShortenerService.Services;
-using UrlShortenerService.Utils;
 
 namespace UrlShortenerService
 {
@@ -68,7 +67,6 @@ namespace UrlShortenerService
             services.AddScoped<IUrlKeyGenerationService, UrlKeyGenerationService>();
             services.AddSingleton<IStackCacheService<ShortUrlKey>, StackCacheService<ShortUrlKey>>();
             services.AddSingleton<IMessagesSender<UrlRedirectMessage>, MessagesSender<UrlRedirectMessage>>();
-            services.AddScoped<IUrlUtil, UrlUtil>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<IShortUrlKeyService, ShortUrlKeyService>();
 
