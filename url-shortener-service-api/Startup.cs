@@ -94,7 +94,7 @@ namespace UrlShortenerService
             }
             
             app.UseCors(
-                options => options.WithOrigins(Configuration.GetValue<string>("EnvVars:ClientUrl")).AllowAnyMethod()
+                options => options.WithOrigins(Configuration.GetValue<string>("EnvVars:ClientUrl")).AllowAnyMethod().AllowAnyHeader()
             );
 
             app.UseHttpsRedirection();
