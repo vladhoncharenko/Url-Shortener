@@ -70,6 +70,7 @@ namespace UrlShortenerService
             services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<IShortUrlKeyService, ShortUrlKeyService>();
 
+            services.AddCors();
             services.AddControllers();
             services.AddMassTransitHostedService();
 
@@ -91,6 +92,10 @@ namespace UrlShortenerService
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "UrlShortenerService v1"));
                 PrepDb.PrepPopulation(app);
             }
+            
+            app.UseCors(
+                options => options.WithOrigins(Configuration.GetValue<string>("EnvVars:ClientUrl")).AllowAnyMethod()
+            );
 
             app.UseHttpsRedirection();
 
