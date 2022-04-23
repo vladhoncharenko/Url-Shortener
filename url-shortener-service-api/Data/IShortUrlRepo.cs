@@ -9,7 +9,7 @@ namespace UrlShortenerService.Data
     {
         Task<bool> SaveChangesAsync();
 
-        IEnumerable<ShortUrl> Get(int page, int pageCapacity);
+        (IEnumerable<ShortUrl>, int) Get(int page, int pageCapacity);
 
         ShortUrl Get(string shortUrlKey);
 

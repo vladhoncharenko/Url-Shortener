@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using UrlShortenerService.Cache;
 using UrlShortenerService.Data;
 using UrlShortenerService.DTOs;
@@ -106,8 +107,9 @@ namespace UrlShortenerService.Controllers
                 return BadRequest("Page Number and Page Capacity should be greater than zero.");
 
             var shortUrls = _shortUrlRepo.Get(page, pageCapacity);
+            var response = new { Count = shortUrls.Item2, Data = _mapper.Map<IEnumerable<ShortUrlReadDTO>>(shortUrls.Item1) };
 
-            return Ok(_mapper.Map<IEnumerable<ShortUrlReadDTO>>(shortUrls));
+            return Ok(JsonConvert.SerializeObject(response));
         }
     }
 }

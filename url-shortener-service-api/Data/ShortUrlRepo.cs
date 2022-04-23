@@ -31,7 +31,7 @@ namespace UrlShortenerService.Data
             await _context.ShortUrls.AddAsync(shortUrl);
         }
 
-        public IEnumerable<ShortUrl> Get(int page, int pageCapacity)
+        public (IEnumerable<ShortUrl>, int) Get(int page, int pageCapacity)
         {
             if (page <= 0)
                 throw new ArgumentOutOfRangeException(nameof(page));
@@ -39,7 +39,7 @@ namespace UrlShortenerService.Data
             if (pageCapacity <= 0)
                 throw new ArgumentOutOfRangeException(nameof(pageCapacity));
 
-            return _context.ShortUrls.Skip((page - 1) * pageCapacity).Take(pageCapacity);
+            return (_context.ShortUrls.Skip((page - 1) * pageCapacity).Take(pageCapacity), _context.ShortUrls.Count());
         }
 
         public void Delete(DateTime dateTime)
