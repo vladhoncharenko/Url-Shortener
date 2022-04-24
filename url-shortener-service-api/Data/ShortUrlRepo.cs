@@ -39,7 +39,7 @@ namespace UrlShortenerService.Data
             if (pageCapacity <= 0)
                 throw new ArgumentOutOfRangeException(nameof(pageCapacity));
 
-            return (_context.ShortUrls.Skip((page - 1) * pageCapacity).Take(pageCapacity), _context.ShortUrls.Count());
+            return (_context.ShortUrls.OrderBy(x=>x.CreatedOn).Skip((page - 1) * pageCapacity).Take(pageCapacity), _context.ShortUrls.Count());
         }
 
         public void Delete(DateTime dateTime)
