@@ -49,9 +49,11 @@ namespace UrlShortenerService.Data
         public async Task<ShortUrl> RegisterRedirectAsync(string shortUrlKey)
         {
             var shortUrl = await GetAsync(shortUrlKey);
-
-            shortUrl.LastRedirect = DateTime.UtcNow;
-            shortUrl.RedirectsCount += 1;
+            if (shortUrl != null)
+            {
+                shortUrl.LastRedirect = DateTime.UtcNow;
+                shortUrl.RedirectsCount += 1;
+            }
 
             return shortUrl;
         }

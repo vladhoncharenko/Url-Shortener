@@ -20,8 +20,11 @@ namespace UrlShortenerService.Messaging
         public async Task Consume(ConsumeContext<UrlRedirectMessage> context)
         {
             var shortUrl = await _shortUrlRepo.RegisterRedirectAsync(context.Message.urlKey);
-            await _shortUrlRepo.SaveChangesAsync();
-            await _cacheService.SetAsync<ShortUrl>(shortUrl.UrlKey, shortUrl);
+            if (shortUrl != null)
+            {
+                await _shortUrlRepo.SaveChangesAsync();
+                await _cacheService.SetAsync<ShortUrl>(shortUrl.UrlKey, shortUrl);
+            }
         }
     }
 }
