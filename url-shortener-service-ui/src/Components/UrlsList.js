@@ -77,7 +77,7 @@ function UrlsList() {
                             {urlsData.map((urlData) => (
                                 <TableRow key={urlData.ShortenedUrl} sx={{'&:last-child td, &:last-child th': {border: 0}}}>
                                     <TableCell component="th" scope="row">
-                                        <a href={urlData.ShortenedUrl}>{formatUrl(urlData.ShortenedUrl)}</a>
+                                        <a href={urlData.ShortenedUrl} target="_blank">{formatUrl(urlData.ShortenedUrl)}</a>
                                     </TableCell>
                                     <TableCell align="left">{urlData.RedirectsCount}</TableCell>
                                     <TableCell align="left">{formatDate(urlData.CreatedOn)}</TableCell>
