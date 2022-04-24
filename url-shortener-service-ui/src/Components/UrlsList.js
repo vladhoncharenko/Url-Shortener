@@ -5,7 +5,7 @@ import Stack from '@mui/material/Stack';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ApiClient from "../Common/ApiClient";
-import {Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
+import {Backdrop, CircularProgress, Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography} from "@mui/material";
 import moment from "moment";
 
 function UrlsList() {
@@ -13,6 +13,7 @@ function UrlsList() {
     const [page, SetPage] = React.useState(1);
     const [pagesAmount, SetPagesAmount] = React.useState(1);
     const [urlsData, SetUrlsData] = React.useState([]);
+    const [isLoaderOpen, SetIsLoaderOpen] = React.useState(false);
 
     async function handlePageChange(event, newPage) {
         SetPage(newPage);
@@ -38,9 +39,11 @@ function UrlsList() {
     }
 
     async function getShortenedUrls(page, pageCapacity) {
+        SetIsLoaderOpen(true);
         const response = await ApiClient.GetShortUrl(page, pageCapacity);
         setAvailablePages(response.data.Count);
         SetUrlsData(response.data.Data)
+        SetIsLoaderOpen(false);
     }
 
     React.useEffect(() => {
@@ -53,6 +56,12 @@ function UrlsList() {
 
     return (
         <Container maxWidth="sm">
+            <Backdrop
+                sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}}
+                open={isLoaderOpen}
+            >
+                <CircularProgress color="inherit"/>
+            </Backdrop>
             <Stack spacing={2} justifyContent="center" alignItems="center">
                 <TableContainer component={Paper}>
                     <Table aria-label="simple table" className="urlsTable">
