@@ -19,6 +19,6 @@ namespace UrlShortenerService.Models
         public DateTime CreatedOn { get; set; }
 
         [Required]
-        public DateTime LastRedirect { get; set; }
+        public DateTime? LastRedirect { get; set; }
     }
 }

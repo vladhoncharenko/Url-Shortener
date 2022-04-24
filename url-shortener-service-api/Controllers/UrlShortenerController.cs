@@ -55,7 +55,8 @@ namespace UrlShortenerService.Controllers
             {
                 UrlKey = shortUrlKey.UrlKey,
                 OriginalUrl = shortUrlCreateDTO.OriginalUrl,
-                CreatedOn = DateTime.UtcNow
+                CreatedOn = DateTime.UtcNow,
+                LastRedirect = null
             };
 
             await _shortUrlRepo.AddAsync(createdShortUrl);

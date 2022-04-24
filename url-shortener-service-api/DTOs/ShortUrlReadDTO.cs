@@ -21,7 +21,7 @@ namespace UrlShortenerService.DTOs
         [Required]
         public DateTime CreatedOn { get; set; }
 
-        [Required]
-        public DateTime LastRedirect { get; set; }
+        [Required] 
+        public DateTime? LastRedirect { get; set; }
     }
 }
