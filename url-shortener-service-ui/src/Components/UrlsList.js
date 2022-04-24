@@ -55,7 +55,7 @@ function UrlsList() {
         <Container maxWidth="sm">
             <Stack spacing={2} justifyContent="center" alignItems="center">
                 <TableContainer component={Paper}>
-                    <Table aria-label="simple table">
+                    <Table aria-label="simple table" className="urlsTable">
                         <TableHead>
                             <TableRow>
                                 <TableCell align="left">Short URL</TableCell>

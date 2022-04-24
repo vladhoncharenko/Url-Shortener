@@ -26,14 +26,14 @@ function UrlShortener() {
                                variant="outlined"/>
                 </Grid>
                 <Grid item xs={4}>
-                    <Button variant="outlined" onClick={shortenUrl} className="buttonHeight" fullWidth={true} startIcon={<AutoFixHighRoundedIcon/>}>Shorten URL</Button>
+                    <Button variant="outlined" onClick={shortenUrl} className="actionButton" fullWidth={true} startIcon={<AutoFixHighRoundedIcon/>}>Shorten URL</Button>
                 </Grid>
                 <Grid item xs={8}>
                     <TextField className="inputFixedSize" value={shortenedUrl} fullWidth={true} disabled={true} onChange={e => SetUrlToShorten(e.target.value)} id="shortenedUrl" label="Shortened URL"
                                variant="outlined"/>
                 </Grid>
                 <Grid item xs={4}>
-                    <Button variant="outlined" onClick={copyUrl} fullWidth={true} className="buttonHeight" startIcon={<ContentCopyRoundedIcon/>}>Copy</Button>
+                    <Button variant="outlined" onClick={copyUrl} fullWidth={true} className="actionButton" startIcon={<ContentCopyRoundedIcon/>}>Copy</Button>
                 </Grid>
             </Grid>
         </Container>

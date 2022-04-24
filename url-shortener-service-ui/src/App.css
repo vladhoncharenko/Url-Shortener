@@ -4,10 +4,26 @@
 
 .headerText {
     font-weight: bold !important;
-    color: white;
+    color: #90caf9;
     margin-top: 10% !important;
 }
 
-.buttonHeight {
+.actionButton {
     height: 56px;
+}
+
+.urlsTable {
+    background-color: #273240;
+}
+
+a:link {
+    color: #90caf9;
+}
+
+a:visited {
+    color: #0e4d7f;
+}
+
+a:hover {
+    color: #1899ff;
 }
