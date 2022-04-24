@@ -82,7 +82,7 @@ namespace UrlShortenerService.Controllers
             var shortUrl = await _cacheService.GetAsync<ShortUrl>(shortUrlKey);
             if (shortUrl == null)
             {
-                shortUrl = _shortUrlRepo.Get(shortUrlKey);
+                shortUrl = await _shortUrlRepo.GetAsync(shortUrlKey);
                 if (shortUrl != null)
                     await _cacheService.SetAsync<ShortUrl>(shortUrl.UrlKey, shortUrl);
             }
@@ -92,7 +92,7 @@ namespace UrlShortenerService.Controllers
 
             await _messagesSender.SendMessageAsync(new UrlRedirectMessage(shortUrl.UrlKey));
 
-            return RedirectPermanent(shortUrl.OriginalUrl);
+            return Redirect(shortUrl.OriginalUrl);
         }
 
         /// <summary>

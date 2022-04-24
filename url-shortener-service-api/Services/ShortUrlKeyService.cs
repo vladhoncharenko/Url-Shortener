@@ -16,7 +16,8 @@ namespace UrlShortenerService.Services
         private readonly IStackCacheService<ShortUrlKey> _stackCacheService;
         private readonly IUrlKeyGenerationService _shortUrlKeyGenerationService;
 
-        public ShortUrlKeyService(IUrlKeyGenerationService shortUrlKeyGenerationService, IShortUrlKeyRepo shortUrlKeyRepo, IStackCacheService<ShortUrlKey> stackCacheService, IConfiguration configuration)
+        public ShortUrlKeyService(IUrlKeyGenerationService shortUrlKeyGenerationService, IShortUrlKeyRepo shortUrlKeyRepo, IStackCacheService<ShortUrlKey> stackCacheService,
+            IConfiguration configuration)
         {
             _shortUrlKeyGenerationService = shortUrlKeyGenerationService;
             _shortUrlKeyRepo = shortUrlKeyRepo;
@@ -47,10 +48,10 @@ namespace UrlShortenerService.Services
 
             var shortUrlKeys = _shortUrlKeyRepo.Get(keysAmount);
             shortUrlKeys.ToList().ForEach(k => k.IsUsed = true);
-
+            var shortUrlKeysResult = shortUrlKeys.ToList();
             await _shortUrlKeyRepo.SaveChangesAsync();
 
-            return shortUrlKeys;
+            return shortUrlKeysResult;
         }
 
         public async Task<ShortUrlKey> GetAsync()

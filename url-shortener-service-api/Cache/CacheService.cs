@@ -19,9 +19,7 @@ namespace UrlShortenerService.Cache
             var value = await _cache.GetStringAsync(key);
 
             if (value != null)
-            {
                 return JsonConvert.DeserializeObject<T>(value);
-            }
 
             return default;
         }

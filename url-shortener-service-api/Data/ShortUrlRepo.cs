@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using UrlShortenerService.Cache;
 using UrlShortenerService.Models;
 
@@ -10,17 +11,15 @@ namespace UrlShortenerService.Data
     public class ShortUrlRepo : IShortUrlRepo
     {
         private readonly AppDbContext _context;
-        private readonly ICacheService _cache;
 
-        public ShortUrlRepo(AppDbContext context, ICacheService cache)
+        public ShortUrlRepo(AppDbContext context)
         {
             _context = context;
-            _cache = cache;
         }
 
-        public ShortUrl Get(string shortUrlKey)
+        public async Task<ShortUrl> GetAsync(string shortUrlKey)
         {
-            return _context.ShortUrls.FirstOrDefault(p => p.UrlKey.Equals(shortUrlKey));
+            return await _context.ShortUrls.FirstOrDefaultAsync(p => p.UrlKey.Equals(shortUrlKey));
         }
 
         public async Task AddAsync(ShortUrl shortUrl)
@@ -39,7 +38,7 @@ namespace UrlShortenerService.Data
             if (pageCapacity <= 0)
                 throw new ArgumentOutOfRangeException(nameof(pageCapacity));
 
-            return (_context.ShortUrls.OrderBy(x=>x.CreatedOn).Skip((page - 1) * pageCapacity).Take(pageCapacity), _context.ShortUrls.Count());
+            return (_context.ShortUrls.OrderBy(x => x.CreatedOn).Skip((page - 1) * pageCapacity).Take(pageCapacity), _context.ShortUrls.Count());
         }
 
         public void Delete(DateTime dateTime)
@@ -47,9 +46,10 @@ namespace UrlShortenerService.Data
             _context.ShortUrls.RemoveRange(_context.ShortUrls.Where(x => x.CreatedOn >= dateTime));
         }
 
-        public ShortUrl RegisterRedirect(string shortUrlKey)
+        public async Task<ShortUrl> RegisterRedirectAsync(string shortUrlKey)
         {
-            var shortUrl = Get(shortUrlKey);
+            var shortUrl = await GetAsync(shortUrlKey);
+
             shortUrl.LastRedirect = DateTime.UtcNow;
             shortUrl.RedirectsCount += 1;
 

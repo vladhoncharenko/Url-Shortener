@@ -58,8 +58,7 @@ function UrlsList() {
         <Container maxWidth="sm">
             <Backdrop
                 sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}}
-                open={isLoaderOpen}
-            >
+                open={isLoaderOpen}>
                 <CircularProgress color="inherit"/>
             </Backdrop>
             <Stack spacing={2} justifyContent="center" alignItems="center">

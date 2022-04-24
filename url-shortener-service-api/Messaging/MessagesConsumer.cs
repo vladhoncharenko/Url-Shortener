@@ -8,8 +8,8 @@ namespace UrlShortenerService.Messaging
 {
     public class MessagesConsumer : IConsumer<UrlRedirectMessage>
     {
-        public IShortUrlRepo _shortUrlRepo;
-        public ICacheService _cacheService;
+        private readonly IShortUrlRepo _shortUrlRepo;
+        private readonly ICacheService _cacheService;
 
         public MessagesConsumer(IShortUrlRepo shortUrlRepo, ICacheService cacheService)
         {
@@ -19,7 +19,7 @@ namespace UrlShortenerService.Messaging
 
         public async Task Consume(ConsumeContext<UrlRedirectMessage> context)
         {
-            var shortUrl = _shortUrlRepo.RegisterRedirect(context.Message.urlKey);
+            var shortUrl = await _shortUrlRepo.RegisterRedirectAsync(context.Message.urlKey);
             await _shortUrlRepo.SaveChangesAsync();
             await _cacheService.SetAsync<ShortUrl>(shortUrl.UrlKey, shortUrl);
         }

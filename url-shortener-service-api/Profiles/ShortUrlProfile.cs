@@ -1,4 +1,6 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using UrlShortenerService.DTOs;
 using UrlShortenerService.Models;
 
@@ -6,9 +8,10 @@ namespace UrlShortenerService.Profiles
 {
     public class ShortUrlProfile : Profile
     {
-        public ShortUrlProfile()
+        public ShortUrlProfile(IConfiguration configuration)
         {
-            CreateMap<ShortUrl, ShortUrlReadDTO>().ForMember(l => l.ShortenedUrl, sl => sl.MapFrom(s => "https://localhost:5001/" + s.UrlKey));
+            var apiUrl = configuration.GetValue<string>("EnvVars:ApiUrl");
+            CreateMap<ShortUrl, ShortUrlReadDTO>().ForMember(l => l.ShortenedUrl, sl => sl.MapFrom(s => apiUrl + s.UrlKey));
             CreateMap<ShortUrlCreateDTO, ShortUrl>();
         }
     }

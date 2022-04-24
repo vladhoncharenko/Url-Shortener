@@ -1,6 +1,6 @@
 import * as React from 'react';
 import ApiClient from "../Common/ApiClient";
-import {Alert, Container, Grid, Snackbar, TextField} from "@mui/material";
+import {Alert, Backdrop, CircularProgress, Container, Grid, Snackbar, TextField} from "@mui/material";
 import Button from "@mui/material/Button";
 import AutoFixHighRoundedIcon from "@mui/icons-material/AutoFixHighRounded";
 import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
@@ -11,6 +11,7 @@ function UrlShortener() {
     const [urlToShorten, SetUrlToShorten] = React.useState("");
     const [shortenedUrl, SetShortenedUrl] = React.useState("");
     const [errorMessage, SetErrorMessage] = React.useState("");
+    const [isLoaderOpen, SetIsLoaderOpen] = React.useState(false);
 
     let errorText = "Incorrect URL, please enter URL in a format like this: https://www.google.com";
 
@@ -25,8 +26,10 @@ function UrlShortener() {
 
         SetErrorMessage("");
         try {
+            SetIsLoaderOpen(true);
             let response = await ApiClient.CreateShortUrl(urlToShorten);
             SetShortenedUrl(response.data.shortenedUrl);
+            SetIsLoaderOpen(false);
             SeIsErrorOpened(false);
         } catch (e) {
             SeIsErrorOpened(true);
@@ -53,6 +56,11 @@ function UrlShortener() {
 
     return (
         <Container maxWidth="sm">
+            <Backdrop
+                sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}}
+                open={isLoaderOpen}>
+                <CircularProgress color="inherit"/>
+            </Backdrop>
             <Grid container rowSpacing={2} columnSpacing={{xs: 1, sm: 2, md: 3}}>
                 <Grid item xs={8}>
                     <TextField className="inputFixedSize" value={urlToShorten} fullWidth={true} onChange={e => SetUrlToShorten(e.target.value)} id="urlToShorten" label="URL to shorten"
